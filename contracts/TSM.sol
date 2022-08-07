@@ -13,7 +13,7 @@ import "./Token.sol";
 contract TSM is Verifiyer{
     using SafeMath for uint256;
 
-    uint256 public ETH_USD = 2*10**21;
+    uint256 public ETH_USD = 2*10**3;
     Token public token;
 
     address private DEFAULT_REF;
@@ -42,6 +42,7 @@ contract TSM is Verifiyer{
     
     function ethBuyWithRef(address ref) external payable{
         require(verified[msg.sender], "You're not verified"); 
+        require(verified[ref], "You're referal address is not verified"); 
         uint256 amount = amountToSend(msg.value.mul(ETH_USD)); 
         FAUCET.transfer(msg.value);
         if (verified[ref])
@@ -61,15 +62,22 @@ contract TSM is Verifiyer{
         require(verified[msg.sender], "You're not verified"); 
         IERC20(token).transferFrom(msg.sender, FAUCET, amount);
         if (verified[ref] && msg.sender != ref)
-            mint(msg.sender, ref, amount * 10**18);
+            mint(msg.sender, ref, amount);
         else
-            mint(msg.sender, DEFAULT_REF, amount * 10**18);
+            mint(msg.sender, DEFAULT_REF, amount);
     }
 
     function amountToSend(uint256 _amountUSD) public view returns(uint256){
         uint256 a = token.totalSupply();
-        return (Math.sqrt(_amountUSD * 2 * 5 + a * a) - a);
+        return (Math.sqrt(_amountUSD * 10**18 * 2 * 5 + a * a) - a);
     } 
+
+    // function OneTokenPrice() external view returns(uint256){
+    //     uint256 a = token.totalSupply();
+    //     uint256 b = a + 10**18;
+    //     return (b**2 - a**2).div(2*5).div(10**18);
+    // }
+
 
     function recieve() external payable{ }
 }
