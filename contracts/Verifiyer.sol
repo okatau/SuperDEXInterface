@@ -16,14 +16,15 @@ contract Verifiyer is AccessControl{
         _;
     }
 
+    function addUser(address user) public onlyRole(USER_REGISTER_ROLE) {
+            verified[user] = true;
+    }
+
     function addUsers(address[] memory users) public onlyRole(USER_REGISTER_ROLE) {
         for(uint256 i; i < users.length; i++)
             verified[users[i]] = true;
     }
 
-    function addUser(address user) public onlyRole(USER_REGISTER_ROLE) {
-            verified[user] = true;
-    }
 
     function removeUsers(address[] memory users) public onlyRole(USER_REGISTER_ROLE) {
         for(uint256 i; i < users.length; i++)

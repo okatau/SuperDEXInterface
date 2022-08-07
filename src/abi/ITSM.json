@@ -4,19 +4,6 @@
   "sourceName": "contracts/Interface/ITSM.sol",
   "abi": [
     {
-      "inputs": [],
-      "name": "OneTokenPrice",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -43,20 +30,14 @@
           "type": "address"
         }
       ],
-      "name": "ethBuy",
+      "name": "ethBuyWithRef",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "am",
-          "type": "uint256"
-        }
-      ],
-      "name": "ethBuyAmount",
+      "inputs": [],
+      "name": "ethBuyWithoutRef",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"

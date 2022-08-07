@@ -6,8 +6,7 @@ import { Box, Button, Flex, Image, Link, Spacer } from '@chakra-ui/react';
 import { ethers, BigNumber } from "ethers";
 import Token from "./abi/Token.json";
 
-
-const TokenAddress = "0x529A234c998fEbB3ef47d4FB7B7F0a37611b7878";
+const TokenAddress = "0x2ec581d1cc3c3038917a4bbb0500662bb98ce2ea";
 
 
 var NavBar = ({accounts, setAccounts}) => {

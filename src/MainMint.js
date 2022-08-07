@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { ethers, BigNumber } from "ethers";
 import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
-import TSM from "./abi/TSM.json";
+import TSM from "./abi/ITSM.json";
 
-const TSMAddress = "0xd2e1c37F6fD502b54DbC41A820dDd094fF6A2370";
+const TSMAddress = "0x077a1A7F8822168fDD1c0e1332C9114721A1dCfd";
 
 
 
@@ -43,6 +43,10 @@ const MaintMint = ({ accounts, setAccounts }) => {
   async function handleMint() {
     const amount = document.getElementById('totalAmt').value;
     if (window.ethereum) {
+      const amount = document.getElementById('totalAmt').value;
+      handleChange(amount);
+      const decimals = 18;
+      const num = BigNumber.from(amount*2000).mul(BigNumber.from(10).pow(decimals));
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
@@ -53,9 +57,10 @@ const MaintMint = ({ accounts, setAccounts }) => {
 
       try {
         // console.log((ethAmount*10**18).toString());
-        const response = await contract.ethBuyAmount({
+        const response = await contract.ethBuyWithoutRef({
             value: ethers.utils.parseEther((amount).toString()),
-        });
+
+          });
         return ("response: ", response);
       } catch (err) {
         console.log("error: ", err);
