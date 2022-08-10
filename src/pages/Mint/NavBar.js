@@ -1,10 +1,10 @@
 import React from 'react';
 import { useState } from "react";
 
-import { Box, Button, Flex, Image, Link, Spacer } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, SliderProvider, Spacer, Text } from '@chakra-ui/react';
 
 import { ethers, BigNumber } from "ethers";
-import Token from "./abi/Token.json";
+import Token from "../../abi/Token.json";
 
 const TokenAddress = "0x2ec581d1cc3c3038917a4bbb0500662bb98ce2ea";
 
@@ -22,11 +22,11 @@ var NavBar = ({accounts, setAccounts}) => {
           TokenAddress,
           Token.abi,
           signer
-        );
-        
+        );    
         try {
+            setTotalSupply('...');
           let response = await contract.totalSupply();
-            setTotalSupply(Math.floor((response.toString())/10**15)/1000);
+          setTotalSupply(Math.floor((response.toString())/10**15)/1000);
         } catch (err) {
           console.log("error: ", err);
         }
@@ -42,6 +42,7 @@ var NavBar = ({accounts, setAccounts}) => {
         );
         
         try {
+            setBalance('...');
         let response = await contract.balanceOf(address);
         setBalance(Math.floor((response.toString())/10**15)/1000);
         } catch (err) {
@@ -50,6 +51,7 @@ var NavBar = ({accounts, setAccounts}) => {
     }
 
     function countOneTokenPrice(){
+
         const a = totalSupply*10**18;
         const b = a + 10**18;
         return '~' + (Math.floor((b**2 - a**2) / 10**34)/10**3).toString() + '$';
@@ -66,16 +68,11 @@ var NavBar = ({accounts, setAccounts}) => {
         setAccounts(accounts);
         return accounts
     }
-
-    async function connectAccount(){
-        const accounts = await updateData();
-        setAccounts(accounts);
-        }
     }
 
     return(
         <div>
-            <Flex justify="space-between" align="center" padding="20px" height="20vh">
+            <Flex align="center" padding="20px" height="10vh">
             
                 {/*Left Side - Social Media Icons*/}
                 {/* <Flex justify="space-around" width="40%" padding="75px">
@@ -96,61 +93,58 @@ var NavBar = ({accounts, setAccounts}) => {
 
 
                 { isConnected ? (
-                    <Box position = 'absolute' margin="0 15px" left ="50px">Current One Token Price {oneTokenPrice}</Box>
+                    <Box position = 'absolute' margin="0 15px" left ="5%">Current One Token Price {oneTokenPrice}</Box>
                 ) : (
                     <p></p>
                 )}
-
-                {/*Connect*/}
                 { isConnected ? (
-                    
-                    <Box position = 'absolute' margin="0 15px" right ="50px">Connected</Box>
+                    <Box position = 'absolute' margin="0 15px" right ="5%">Connected</Box>
                 ) : (
-                    <Box position = 'absolute' margin="0 15px" right ="50px">Connect to buy and view data</Box>
+                    <Box position = 'absolute' margin="0 15px" right ="5%">Connect to buy and view data</Box>
                 ) }
-    </Flex>
+            </Flex>
 
-    <Flex justify="space-between" align="center" height="10vh" padding="30px" >
-                <Spacer />
-                <Box margin="0 0px" fontSize="25px">Total supply {totalSupply}</Box>
+            <Flex justify="space-between" height="10vh" padding="15px" >
+                <Box width = "250px" fontSize="20px"  position = 'absolute' margin="0 5px" left ="10%"> Total supply {totalSupply}</Box>
+                <Box width = "250px"  fontSize="20px" position = 'absolute' margin="0 5px" right ="10%">Your balance {balance}</Box>
+            </Flex>
 
-                <Spacer />
-                <Box margin="0 0px" fontSize="25px">Your balance {balance}</Box>
-                <Spacer />
-    </Flex>
-
-    { isConnected ? (
+            <Flex justify="center" align="center" height="10vh" padding="30px" >
+            { isConnected ? (
                     
-                    <Button
-                    backgroundColor="#008fd4"
-                    borderRadius="5px"
-                    boxShadow="0px 2px 2px 1px #0F0F0F"
-                    color="white"
-                    cursor="pointer"
-                    fontFamily="inherit"
-                    padding="15px"
-                    margin="10"
-                    onClick={updateData}
-                  >
-                    Update data
-                  </Button>
-                ) : (
-                    <Button
-                    backgroundColor="#008fd4"
-                    borderRadius="5px"
-                    boxShadow="0px 2px 2px 1px #0F0F0F"
-                    color="white"
-                    cursor="pointer"
-                    fontFamily="inherit"
-                    padding="15px"
-                    margin="10"
-                    onClick={updateData}
-                  >
-                    Connect
-                  </Button>
-                ) }
+                <Button
+                backgroundColor="#008fd4"
+                borderRadius="5px"
+                boxShadow="0px 2px 2px 1px #0F0F0F"
+                color="white"
+                cursor="pointer"
+                fontFamily="inherit"
+                padding="15px"
+                margin="10"
+                justify-content = 'center'
 
-    </div>
+                onClick={updateData}
+                >
+                Update data
+                </Button>
+            ) : (
+                <Button
+                backgroundColor="#008fd4"
+                borderRadius="5px"
+                boxShadow="0px 2px 2px 1px #0F0F0F"
+                color="white"
+                cursor="pointer"
+                fontFamily="inherit"
+                padding="15px"
+                margin="10"
+                justify-content = 'center'
+                onClick={updateData}
+                >
+                Connect
+                </Button>
+            ) }
+            </Flex>
+        </div>
     );
 };
 

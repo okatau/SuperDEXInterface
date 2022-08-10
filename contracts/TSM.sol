@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // import "./Oracle.sol";
 import "./Verifiyer.sol";
 import "./Token.sol";
+import "./Freezer.sol";
 
 // contract TSM is MultiWordConsumer, Verifiyer{
 contract TSM is Verifiyer{
@@ -16,68 +17,92 @@ contract TSM is Verifiyer{
     uint256 public ETH_USD = 2*10**3;
     Token public token;
 
-    address private DEFAULT_REF;
+    address private FREEZER;
     address payable private FAUCET;
+    bool private lock;
+
+    modifier reEntrancyStop(){
+        require(!lock, "Stop reEntrancy");
+        lock = true;
+        _;
+        lock = false;
+    }
 
     constructor(address _token) {
         token = Token(_token);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(keccak256("USER_REGISTER_ROLE"), msg.sender);
-        // addUser(msg.sender);
         FAUCET = payable(msg.sender);
-        DEFAULT_REF = msg.sender;
     }
 
     function SetFaucet(address faucet) external onlyRole(DEFAULT_ADMIN_ROLE){
         FAUCET = payable(faucet);
-        DEFAULT_REF = payable(faucet);
     }
 
-    function mint(address buyer, address ref, uint256 amount) internal {
-        if (ref != DEFAULT_REF)
-            token.mint(buyer, amount, ref, amount.div(25));
-        else
-            token.mint(buyer, amount);
+    function SetFreezer(address freezer) external onlyRole(DEFAULT_ADMIN_ROLE){
+        FREEZER = payable(freezer);
+    }
+
+    function mintWithRef(address buyer, address ref, uint256 amount) internal returns(bool){
+        (bool success, ) = address(token).call(
+            abi.encodeWithSignature("mint(address,uint256,address,uint256)",
+                buyer,
+                amount,
+                ref,
+                amount.div(25)
+            ));
+        require(success, "Mint was denied");
+        return success;
     }
     
-    function ethBuyWithRef(address ref) external payable{
+    function mintWithoutRef(address buyer, uint256 amount) internal{
+        token.mint(buyer, amount);
+    }
+
+    function ethBuyWithRef(address ref) external payable reEntrancyStop(){
         require(verified[msg.sender], "You're not verified"); 
-        require(verified[ref], "You're referal address is not verified"); 
         uint256 amount = amountToSend(msg.value.mul(ETH_USD)); 
         FAUCET.transfer(msg.value);
         if (verified[ref])
-            mint(msg.sender, ref, amount);
+            mintWithRef(msg.sender, ref, amount);
         else
-            mint(msg.sender, DEFAULT_REF, amount);
+        {
+            bool success = mintWithRef(msg.sender, FREEZER, amount);
+            require(success, "Mint was denied");
+            addClaimer(ref);
+        }
     }
 
-    function ethBuyWithoutRef() external payable{
+    function ethBuyWithoutRef() external payable reEntrancyStop(){
         require(verified[msg.sender], "You're not verified"); 
         uint256 amount = amountToSend(msg.value.mul(ETH_USD));
         FAUCET.transfer(msg.value);
-        mint(msg.sender, DEFAULT_REF, amount); 
+        mintWithoutRef(msg.sender, amount); 
     }
 
-    function stableBuy(address ref, address _token, uint256 amount) external payable onlyVerifiedToken(_token) {
-        require(verified[msg.sender], "You're not verified"); 
-        IERC20(token).transferFrom(msg.sender, FAUCET, amount);
-        if (verified[ref] && msg.sender != ref)
-            mint(msg.sender, ref, amount);
-        else
-            mint(msg.sender, DEFAULT_REF, amount);
-    }
+    // function stableBuy(address ref, address _token, uint256 amount) external payable onlyVerifiedToken(_token) {
+    //     require(verified[msg.sender], "You're not verified"); 
+    //     IERC20(token).transferFrom(msg.sender, FAUCET, amount);
+    //     if (verified[ref] && msg.sender != ref)
+    //         mint(msg.sender, ref, amount);
+    //     else
+    //         mint(msg.sender, DEFAULT_REF, amount);
+    // }
 
     function amountToSend(uint256 _amountUSD) public view returns(uint256){
         uint256 a = token.totalSupply();
         return (Math.sqrt(_amountUSD * 10**18 * 2 * 5 + a * a) - a);
     } 
 
-    // function OneTokenPrice() external view returns(uint256){
-    //     uint256 a = token.totalSupply();
-    //     uint256 b = a + 10**18;
-    //     return (b**2 - a**2).div(2*5).div(10**18);
-    // }
+    function addClaimer(address claimer) internal{
+        Freezer(FREEZER).addClaimer(claimer);
+    }
 
+    function withdrawRefFunds() public {
+        require(verified[msg.sender], "You're not verified"); 
+        // require(Freezer(FREEZER).claimList[msg.sender] > 0, "You haven't token for claim");
+        Freezer(FREEZER).withdraw(msg.sender);
+    }
 
-    function recieve() external payable{ }
+    function recieve() external payable{}
 }

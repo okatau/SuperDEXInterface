@@ -4,7 +4,7 @@
 .App {
   text-align: center;
   font-family: "Press Start 2P", "VT323";
-  color: white;
+  color: black;
 }
 
 * {
@@ -32,11 +32,10 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("./assets/background/back.jpg");
-  background-size: cover;
+  /* background-image: url("./assets/background/back.jpg"); */
+  background: rgb(2,0,36);
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(232,241,255,1) 0%, rgba(0,78,255,0.8015581232492998) 100%);
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: 40% 40%;
-  
- 
 }

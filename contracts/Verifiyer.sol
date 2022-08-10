@@ -40,4 +40,8 @@ contract Verifiyer is AccessControl{
         for(uint256 i; i < tokens.length; i++)
             avaiableStableCoin[tokens[i]] = false;
     }
+
+    function checkUser(address _user) external view returns(bool) {
+        return verified[_user];
+    }
 }
