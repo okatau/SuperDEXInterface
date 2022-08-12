@@ -4,7 +4,7 @@ import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 import TSM from "../../abi/ITSM.json";
 
 const { isChecksumAddress } = require('ethereum-checksum-address')
-const TSMAddress = "0x25be9d241171529f63C53004Ee19302866063338";
+const TSMAddress = "0xf2F96F07a8E838d677c1AfC0e9d828C0E176Bd8E";
 
 const MaintMint = ({ accounts, setAccounts }) => {
   const [value, setValue] = useState(0);
@@ -123,7 +123,7 @@ const MaintMint = ({ accounts, setAccounts }) => {
         </div>
       </Box>
     </Flex>
-    <Flex justify="center" align="center" height="15vh">
+    <Flex justify="center" align="center" height="25vh">
       <div>
           <Input
               name="amount"
@@ -155,7 +155,7 @@ const MaintMint = ({ accounts, setAccounts }) => {
           </p>
       </div>
     </Flex>
-    <Flex justify="center" align="center" height="20vh">
+    <Flex justify="center" align="center" height="25vh">
       {isConnected ? (
         <div>
           <Button

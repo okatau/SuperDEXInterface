@@ -98,7 +98,7 @@ var NavBar = ({accounts, setAccounts}) => {
                     <p></p>
                 )}
                 { isConnected ? (
-                    <Box position = 'absolute' margin="0 15px" right ="5%">Connected</Box>
+                    <Box position = 'absolute'  fontSize="15px" justify-content = 'center' width = "350px" margin="0 15px" right ="20%">{accounts[0]} is Connected </Box>
                 ) : (
                     <Box position = 'absolute' margin="0 15px" right ="5%">Connect to buy and view data</Box>
                 ) }
