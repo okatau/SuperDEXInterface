@@ -1,6 +1,9 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IFaucet{
+import "@openzeppelin/contracts/access/IAccessControl.sol";
+
+interface IFaucet is IAccessControl{
     
     struct Brook{
         address id;

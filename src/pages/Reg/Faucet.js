@@ -3,9 +3,6 @@ import '../Mint/App.css';
 import './Faucet.css';
 import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import NavBar from '../Mint/NavBar';
-import { setConstantValue } from 'typescript';
-import { click } from '@testing-library/user-event/dist/click';
 import IFaucet from "../../abi/IFaucet.json";
 
 
@@ -16,13 +13,12 @@ const FaucetAddress = "0x843036bd0e7DD7Bf1A054e3619eD119A013005Db";
 function Faucet() {
     const [accounts, setAccounts] = useState([]);
     const isConnected = Boolean(accounts[0]);
+    const [Admin, setAdmin] = useState(false);
+    const [withdrawAmount, setwithdrawAmount] = useState('');
+    const [TotalBalance, setTotalBalance] = useState('');
+    const [DisturbedBalance, setDisturbedBalance] = useState('');
     const [inputList, setInputList] = useState([{ address: "", percent: "" }]);
 
-
-    function click(){
-        console.log("click");
-        // console.log("value");
-    }
 // handle input change
     const handleInputChange = (e, index) => {
         const { name, value } = e.target;
@@ -107,22 +103,82 @@ function Faucet() {
         }       
     }
 
+    async function isAdmin(contract){
+        console.log("isAdmin");
+        try {
+            let response = await contract.hasRole("0x0000000000000000000000000000000000000000000000000000000000000000", accounts[0]);
+            console.log("isAdmin: ", response);
+            setAdmin(response);
+        } catch (err) {
+            console.log("error: ", err);
+        } 
+    }
+
+    async function getWithdrawAmount(contract){
+        console.log("getWithdrawAmount");
+        try {
+            let response = await contract.info(accounts[0]);
+            console.log("withDraw: ", response[0]/10**18);
+            setwithdrawAmount(response[0]/10**18);
+        } catch (err) {
+            console.log("error: ", err);
+        } 
+    }
+
+    async function getTotalBalance(contract){
+        console.log("getTotalBalance");
+        try {
+            let response = await contract.totalBalance();
+            console.log("totalBalance: ", response/10**18);
+            setTotalBalance(response/10**18);
+        } catch (err) {
+            console.log("error: ", err);
+        }
+    }
+
+async function getDisturbed(contract){
+        console.log("getDisturbed");
+        try {
+            let response = await contract.totalDisturbed();
+            console.log("totalDisturbed: ", response/10**18);
+            setDisturbedBalance(response/10**18);
+        } catch (err) {
+            console.log("error: ", err);
+        } 
+    }
 
     async function Connect(){
         if(window.ethereum) {
             const accounts = await window.ethereum.request({
                 method: "eth_requestAccounts",
-            });
+            });  
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const contract = new ethers.Contract(
+            FaucetAddress,
+            IFaucet.abi,
+            signer
+            );
         setAccounts(accounts);
-        console.log(isConnected);
+        isAdmin(contract);
+        getWithdrawAmount(contract);
+        getTotalBalance(contract);
+        getDisturbed(contract);
         }
     }
-
+    
     return (
         <div className="overlay">
-            {inputList.map((x, i) => {
-            return (
-                <div className="box" id = 'inputBrooks'>
+            <div>
+              {
+                Admin ? (
+                    <div>
+                        <Text className='baseText' fontFamily="VT323">
+                            Hello Admin!
+                        </Text>
+                        {inputList.map((x, i) => {
+                return (
+                <div className="box" id = 'inputBrooks' align = 'center'>
                     <input
                         name="address"
                         id = 'address'
@@ -141,47 +197,80 @@ function Faucet() {
                         value={x.percent}
                         onChange={e => handleInputChange(e, i)}
                     />
-                    <div className="btn-box">
-                        {inputList.length !== 1 && <button
-                        className="mr10"
-                        onClick={() => handleRemoveClick(i)}>Remove</button>}
-                        {inputList.length - 1 === i && <button onClick={handleAddClick}>Add</button>}
+                    <div >
+                        {inputList.length !== 1 && <Button className = 'addRemovebutton'
+                        onClick={() => handleRemoveClick(i)}>Remove</Button>}
+                        {inputList.length - 1 === i && <Button className = 'addRemovebutton' onClick={handleAddClick}>Add</Button>}
                     </div>
                 </div>
             );
-            })}
+            })} 
+                            <div align = 'center'>
+                        <Button className = 'chkraButton' onClick={changeBrooks}>
+                            Change Brooks 
+                        </Button>
+                        <Text className='baseText' fontFamily="VT323" padding = '0px'>
+                       ------------------------------------
+                        </Text>
+                    </div> 
+                    
+                    <Button className = 'chkraButton' onClick={Disturbe}>
+                            Disturbe Funds 
+                    </Button>
+                    <Text className='baseText' fontFamily="VT323">
+                       ------------------------------------
+                        </Text>
+                    </div>
+                ):(
+                    <div>
+                        <Text className='baseText' fontFamily="VT323">
+                            You are not Admin!
+                        </Text>
+                        <Text className='baseText' fontFamily="VT323">
+                            ------------------------------------
+                        </Text>
+                    </div>
+                )
+              }  
+            </div>
+
             <div>
                 {isConnected ? (
                 <div>
-                    <div className="btn-box">
-                        <button className="mr10" onClick={changeBrooks}>
-                            Change Brooks {}
-                        </button>
-                    </div>
-                    <div className="btn-box">
-                        <button className="mr10" onClick={Disturbe}>
-                            Disturbe Funds {}
-                        </button>
-                    </div>
-                    <div className="btn-box">
-                        <button className="mr10" onClick={Withdraw}>
-                            Withdraw {}
-                        </button>
+                    <div>
+                    <Text className='baseText' fontFamily="VT323">
+                        Disturbed Balance: {DisturbedBalance}
+                        </Text>
+                    <Text className='baseText' fontFamily="VT323">
+                        Total Balance: {TotalBalance}
+                    </Text>
                     </div>
                     <div>
-                        {accounts[0]}
+
+                    <Text className='baseText' fontFamily="VT323">
+                        Withdraw Avaiable {withdrawAmount}
+                    </Text>
+                    <Button className = 'chkraButton' onClick={Withdraw}>
+                        Withdraw 
+                    </Button>
                     </div>
-                    <div className="btn-box">
-                    <button className="mr10" onClick={Connect}>
+                    <div>
+                    <Text className='baseText' fontFamily="VT323">
+                        {accounts[0]}
+                    </Text>
+                    </div>
+                    <div >
+
+                    <Button className = 'chkraButton' onClick={Connect} >
                         Update data
-                    </button>
+                    </Button>
                 </div>
                 </div>
                 ):(
-                <div className="btn-box">
-                    <button className="mr10" onClick={Connect}>
+                <div>
+                    <Button className = 'chkraButton' onClick={Connect} >
                         Connect
-                    </button>
+                    </Button>
                 </div>)
                 }  
             </div>
