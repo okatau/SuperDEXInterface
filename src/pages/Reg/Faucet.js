@@ -27,7 +27,7 @@ function Faucet() {
     const [Admin, setAdmin] = useState(false);
     const [withdrawAmount, setwithdrawAmount] = useState('');
     const [TotalBalance, setTotalBalance] = useState('');
-    const [DisturbedBalance, setDisturbedBalance] = useState('');
+    const [DistributedBalance, setDistributedBalance] = useState('');
     const [inputList, setInputList] = useState([{ address: "", percent: "" }]);
     const [Hello, setHello] = useState("Hello");
     
@@ -82,7 +82,7 @@ function Faucet() {
         }
     }
 
-    async function Disturbe(){
+    async function Distribute(){
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
@@ -93,7 +93,7 @@ function Faucet() {
             signer
             );
             try {
-                let response = await contract.DisturbeFunds();
+                let response = await contract.DistributeFunds();
                 console.log(response);
             } catch (err) {
                 console.log("error: ", err);
@@ -160,8 +160,8 @@ async function getDistributed(contract){
         console.log("getDistributed");
         try {
             let response = await contract.TotalDistributed();
-            console.log("totalDisturbed: ", response/10**18);
-            setDisturbedBalance(response/10**18);
+            console.log("totalDistributed: ", response/10**18);
+            setDistributedBalance(response/10**18);
         } catch (err) {
             console.log("error: ", err);
         } 
@@ -235,7 +235,7 @@ async function getDistributed(contract){
                         </Text>
                     </div> 
                     
-                    <Button className = 'chkraButton' onClick={Disturbe}>
+                    <Button className = 'chkraButton' onClick={Distribute}>
                             Distribute Funds 
                     </Button>
                     <Text className='baseText' fontFamily="VT323">
@@ -260,7 +260,7 @@ async function getDistributed(contract){
                 <div>
                     <div>
                     <Text className='baseText' fontFamily="VT323">
-                        Distributed Balance: {DisturbedBalance}
+                        Distributed Balance: {DistributedBalance}
                         </Text>
                     <Text className='baseText' fontFamily="VT323">
                         Total Balance: {TotalBalance}
