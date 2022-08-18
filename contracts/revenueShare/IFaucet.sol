@@ -14,13 +14,15 @@ interface IFaucet is IAccessControl{
 
     function updateBrooks(Brook[] memory _brooks) external returns(uint256);
 
-    function DisturbeFunds() external returns(uint256);
+    function DistributeFunds() external returns(uint256);
 
     function recieve() external payable;
 
     function info(address id) external view returns(uint256, uint256);
 
-    function totalBalance() external view returns(uint256);
+    function TotalBalance() external view returns(uint256);
 
-    function totalDisturbed() external view returns(uint256);
+    function TotalDistributed() external view returns(uint256);
+
+    function Split() external payable;
 }

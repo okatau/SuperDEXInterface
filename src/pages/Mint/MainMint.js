@@ -4,7 +4,7 @@ import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 import TSM from "../../abi/ITSM.json";
 
 const { isChecksumAddress } = require('ethereum-checksum-address')
-const TSMAddress = "0xf2F96F07a8E838d677c1AfC0e9d828C0E176Bd8E";
+const TSMAddress = "0xE62cE565e39357825785F265c0cA84143FB338C3";
 
 const MaintMint = ({ accounts, setAccounts }) => {
   const [value, setValue] = useState(0);

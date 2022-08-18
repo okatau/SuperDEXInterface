@@ -5,9 +5,20 @@ import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import IFaucet from "../../abi/IFaucet.json";
 
+const listFaucet = {
+    "0xed75af74cf9ca5a98a37ddba36f37cf28949a089": "0xdB01244c5AB5E90eE0d0F2D09183C53E21eeb710",
+    "0x3fd67e4c6aeb513128475ff1788a6d90c666fc5c": "0xd9ab2DAb6F1dE86fa2Fb48F3B2f94e02Cd982Ba8",
+    "0x01bd218794a8ea20d2b53a43cb16fdcc19fbdac3": "0x030117c46818072F0C0EDa9D5Ed1567461699780",
+    "0x3604226674a32b125444189d21a51377ab0173d1": "0x4FC47a5B4280c90D714Dca7b3323749Ba6E09947"
+    };
 
-
-const FaucetAddress = "0x843036bd0e7DD7Bf1A054e3619eD119A013005Db";
+const listName = {
+    "0xed75af74cf9ca5a98a37ddba36f37cf28949a089": "Welcome, Daniil",
+    "0x3fd67e4c6aeb513128475ff1788a6d90c666fc5c": "Welcome, Dmitriy",
+    "0x01bd218794a8ea20d2b53a43cb16fdcc19fbdac3": "Welcome, Amir",
+    "0x3604226674a32b125444189d21a51377ab0173d1": "Welcome, Gleb"
+}
+// const FaucetAddress = "0x843036bd0e7DD7Bf1A054e3619eD119A013005Db";
 
 
 function Faucet() {
@@ -18,6 +29,8 @@ function Faucet() {
     const [TotalBalance, setTotalBalance] = useState('');
     const [DisturbedBalance, setDisturbedBalance] = useState('');
     const [inputList, setInputList] = useState([{ address: "", percent: "" }]);
+    const [Hello, setHello] = useState("Hello");
+    
 
 // handle input change
     const handleInputChange = (e, index) => {
@@ -53,6 +66,8 @@ function Faucet() {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
+            console.log(accounts[0]);
+            var FaucetAddress = listFaucet[accounts[0]];
             const contract = new ethers.Contract(
             FaucetAddress,
             IFaucet.abi,
@@ -71,6 +86,7 @@ function Faucet() {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
+            var FaucetAddress = listFaucet[accounts[0]];
             const contract = new ethers.Contract(
             FaucetAddress,
             IFaucet.abi,
@@ -89,6 +105,7 @@ function Faucet() {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
+            var FaucetAddress = listFaucet[accounts[0]];
             const contract = new ethers.Contract(
             FaucetAddress,
             IFaucet.abi,
@@ -109,6 +126,9 @@ function Faucet() {
             let response = await contract.hasRole("0x0000000000000000000000000000000000000000000000000000000000000000", accounts[0]);
             console.log("isAdmin: ", response);
             setAdmin(response);
+            if (accounts[0] in listName){
+                setHello(listName[accounts[0]]);
+            }
         } catch (err) {
             console.log("error: ", err);
         } 
@@ -128,7 +148,7 @@ function Faucet() {
     async function getTotalBalance(contract){
         console.log("getTotalBalance");
         try {
-            let response = await contract.totalBalance();
+            let response = await contract.TotalBalance();
             console.log("totalBalance: ", response/10**18);
             setTotalBalance(response/10**18);
         } catch (err) {
@@ -136,10 +156,10 @@ function Faucet() {
         }
     }
 
-async function getDisturbed(contract){
-        console.log("getDisturbed");
+async function getDistributed(contract){
+        console.log("getDistributed");
         try {
-            let response = await contract.totalDisturbed();
+            let response = await contract.TotalDistributed();
             console.log("totalDisturbed: ", response/10**18);
             setDisturbedBalance(response/10**18);
         } catch (err) {
@@ -152,18 +172,19 @@ async function getDisturbed(contract){
             const accounts = await window.ethereum.request({
                 method: "eth_requestAccounts",
             });  
+            setAccounts(accounts);
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
+            const FaucetAddress = listFaucet[accounts[0]];
             const contract = new ethers.Contract(
             FaucetAddress,
             IFaucet.abi,
             signer
             );
-        setAccounts(accounts);
         isAdmin(contract);
         getWithdrawAmount(contract);
         getTotalBalance(contract);
-        getDisturbed(contract);
+        getDistributed(contract);
         }
     }
     
@@ -174,7 +195,7 @@ async function getDisturbed(contract){
                 Admin ? (
                     <div>
                         <Text className='baseText' fontFamily="VT323">
-                            Hello Admin!
+                            {Hello}
                         </Text>
                         {inputList.map((x, i) => {
                 return (
@@ -215,7 +236,7 @@ async function getDisturbed(contract){
                     </div> 
                     
                     <Button className = 'chkraButton' onClick={Disturbe}>
-                            Disturbe Funds 
+                            Distribute Funds 
                     </Button>
                     <Text className='baseText' fontFamily="VT323">
                        ------------------------------------
@@ -239,7 +260,7 @@ async function getDisturbed(contract){
                 <div>
                     <div>
                     <Text className='baseText' fontFamily="VT323">
-                        Disturbed Balance: {DisturbedBalance}
+                        Distributed Balance: {DisturbedBalance}
                         </Text>
                     <Text className='baseText' fontFamily="VT323">
                         Total Balance: {TotalBalance}
