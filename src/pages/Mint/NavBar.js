@@ -52,9 +52,12 @@ var NavBar = ({accounts, setAccounts}) => {
 
     function countOneTokenPrice(){
 
-        const a = totalSupply*10**18;
-        const b = a + 10**18;
-        return '~' + (Math.floor((b**2 - a**2) / 10**34)/10**3).toString() + '$';
+        const a = totalSupply;
+        const alpha = 0.1;
+        const k = (69)/2*10**(-12);
+        const eth = 1000;
+        var ans = (alpha+k*(2*a + 1)) / eth
+        return '~' + (ans).toString() + ' (ETH)';
     }
 
     async function updateData(){

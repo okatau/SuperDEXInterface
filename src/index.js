@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './pages/Mint/App';
-import Faucet from './pages/Reg/Faucet';
+import Faucet from './pages/Valve/Faucet';
+import Freezer from './pages/Freezer/Freezer';
 import {HashRouter as Router, Switch , Route, Routes, Link} from 'react-router-dom';
 // import {BrowserRouter as Router, Switch , Route, Routes, Link} from 'react-router-dom';
 
@@ -13,7 +14,8 @@ root.render(
     <Routes>
       {/* <Route path="web-tsm/" element={<App />} /> */}
       <Route path="/tsm" element={<App />} />
-      <Route path= "/faucet" element={<Faucet />} />
+      <Route path= "/valve" element={<Faucet />} />
+      <Route path= "/freezer" element={<Freezer />} />
     </Routes>
   </Router>
 );

@@ -1,28 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./Interface/ITSM.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract Freezer {
-    using SafeMath for uint256;
-
-    address public TOKEN;  
+    address public tokenAddress;  
     mapping (address => uint256) public claimList;
-    uint256 private sum; 
-
+    
+    uint256 private balance; 
     address private TSM;
-    address private ADMIN;
+    address private admin;
     bool private lock = false;
 
-    constructor(address tsm, address _token){
-        TOKEN = _token;
-        ADMIN = msg.sender;
-        TSM = tsm;
+    constructor(address _token, address _tsm){
+        tokenAddress = _token;
+        TSM = _tsm;
+        admin = msg.sender;
     }
 
     modifier onlyClaimList(address user){
-        require(claimList[user] > 0, "You haven't token for X.LA");
+        require(claimList[user] > 0, "You haven't token for claim");
         _;
     }
 
@@ -38,8 +36,8 @@ contract Freezer {
         _;
     } 
 
-    modifier isAdmin(address admin){
-        require(admin == ADMIN, "You're not Admin");
+    modifier isAdmin(address _admin){
+        require(admin == _admin, "You're not Admin");
         _;
     } 
 
@@ -47,21 +45,18 @@ contract Freezer {
         TSM = newTSM;
     }
 
-    function addClaimer(address claimer) public isTSM(msg.sender){
-        require( IERC20(TOKEN).balanceOf(address(this)) - sum > 0, "User haven't token for Claim");
-        claimList[claimer] = IERC20(TOKEN).balanceOf(address(this)) - sum;
-        sum = IERC20(TOKEN).balanceOf(address(this));
+    function addClaimer(address claimer) external isTSM(msg.sender) reEntrancyStop(){
+        require(IERC20(tokenAddress).balanceOf(address(this)) - balance > 0, "User has no tokens for Claim");
+        uint256 newBalance = IERC20(tokenAddress).balanceOf(address(this)) - balance;
+        balance = IERC20(tokenAddress).balanceOf(address(this));
+        claimList[claimer] += newBalance;
     }
 
-    function withdraw(address claimer) external onlyClaimList(claimer) reEntrancyStop() {
-        (bool success, bytes memory data) = address(TSM).call(
-            abi.encodeWithSignature("checkUser(address)", msg.sender)
-        );
-        require(success, "call is failed");
-        bool verified = abi.decode(data, (bool));
+    function withdraw() external onlyClaimList(msg.sender) reEntrancyStop() {
+        bool verified = ITSM(TSM).checkUser(msg.sender);
         require(verified, "you are not verified");
-        uint256 amount = claimList[claimer];
-        claimList[claimer] = 0;
-        IERC20(TOKEN).transfer(claimer, amount);
+        uint256 amount = claimList[msg.sender];
+        claimList[msg.sender] = 0;
+        IERC20(tokenAddress).transfer(msg.sender, amount);
     }
 }
