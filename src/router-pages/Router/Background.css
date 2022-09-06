@@ -1,0 +1,41 @@
+.base-background {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(232,241,255,1) 0%, rgba(0,0,0,0.8015581232492998) 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 40% 40%; 
+  }
+
+.uniswap-background {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgb(34, 34, 34) 0%, rgb(245, 161, 231) 0%, rgba(184, 183, 183, 0.802) 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 40% 40%; 
+  }
+
+  .zerox-background {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgb(71, 67, 67) 0%, rgb(56, 43, 233) 0%, rgba(177, 176, 176, 0.802) 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 40% 40%; 
+  }

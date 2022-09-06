@@ -1,8 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Press+Start+2P");
 @import url("https://fonts.googleapis.com/css?family=VT323");
-@import 
 
-.Faucet {
+.Zerox {
   text-align: center;
   font-family: "Press Start 2P", "VT323";
   color: black;
@@ -35,7 +34,7 @@ body {
   right: 0;
   bottom: 0;
   background: rgb(2,0,36);
-  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(232,241,255,1) 0%, rgba(0,78,255,0.8015581232492998) 100%);
+  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgb(23, 12, 175) 0%, rgba(0,0,0,0.8015581232492998) 100%);
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: 40% 40%; 
@@ -52,19 +51,6 @@ body {
   padding: 15px ;
   align-content: center;
   margin: 10 ;
-}
-
-.addRemovebutton {
-    margin-top:2px;
-    background: #008fd4 ;
-    border-radius: 10px ;
-    box-shadow: 0px 2px 2px 1px #0F0F0F; 
-    color: white ;
-    cursor: pointer; 
-    font-family: inherit; 
-    padding: 3px ;
-    align-content: center;
-    margin: 10 ;
 }
 
 .baseText {
