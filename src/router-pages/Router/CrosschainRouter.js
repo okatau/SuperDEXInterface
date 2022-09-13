@@ -4,6 +4,7 @@ import Zerox from './../Zerox/Zerox'
 import './CrosschainRouter.css';
 import './Background.css';
 import Connect from './Connect';
+import Approve from './Approve';
 import { render } from 'react-dom';
 import NavBar from './NavBar';
 
@@ -35,7 +36,6 @@ function CrosschainRouter(){
         setIsZerox={setIsZerox}
         setIsCrosschain={setIsCrosschain}
         />
-
         {
         isUniswap && 
             <Uniswap  />
@@ -45,6 +45,7 @@ function CrosschainRouter(){
         isZerox &&
             <Zerox />
         }
+        <Approve />
         <div className={customBackground}> </div>
     </div>
     );

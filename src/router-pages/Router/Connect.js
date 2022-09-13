@@ -6,7 +6,7 @@ import './Background.css';
 import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 
 function Connect({signer, setSigner, isConnected, setIsConnected ,renderconnectinfo, setrenderconnectinfo}){
-    const targetNetworkId = ['0x61', '0x2a'];
+    const targetNetworkId = ['0x61', '0x13881'];
     const [net, setNet] = useState('Switch Net');
 
     async function ConnectF(){
@@ -69,8 +69,8 @@ function Connect({signer, setSigner, isConnected, setIsConnected ,renderconnecti
         }
         if (checkNetwork=='0x61')
             setNet('BSC testnet');
-        if (checkNetwork=='0x2a')
-            setNet('Kovan testnet');
+        if (checkNetwork=='0x13881')
+            setNet('Polygon Mumbai testnet');
     }
     return(
         <div>

@@ -8,54 +8,20 @@ import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 import IParaSwap from './../../abi/IParaSwap.json'
 import { ethers, BigNumber } from "ethers";
 
-const AugustusSwapperAddress = "0x38582841f43D41e71C9b3A46B61aD79D765432AF";
+const AugustusSwapperAddress = {80001:"0x38582841f43D41e71C9b3A46B61aD79D765432AF", 
+                                97:"0x61F417C743afed21a8813c6b15a6D026D4EeA419"};
 
-async function SwapUniswap(amountIn, amountOutMin, inputListBefore, receiver, inputListAfter, signer){
-    var before=[]
-    for (var i in inputListBefore){
-        before.push(inputListBefore[i]['address']);
-    }     
-    var after=[]
-    for (var i in inputListAfter){
-        after.push(inputListAfter[i]['address']);
-    } 
-    console.log([amountIn, amountOutMin, inputListBefore, receiver, inputListAfter]);
-    
-    if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(
-          AugustusSwapperAddress,
-          IParaSwap,
-          signer
-        );
-  
-        try {
-            console.log("try Swap");
-            const options = {value: ethers.utils.parseEther((0.01).toString())};
-            const fee = ethers.utils.parseEther((0.05).toString()); 
-            const amount = ethers.utils.parseEther((amountIn).toString()); 
-            const minOut = ethers.utils.parseEther((amountOutMin).toString()); 
-
-            console.log("fee", fee);
-            let response = await contract.swapOnUniswapDeBridge([amount, minOut, before, after, receiver, fee, 42], options);
-            console.log("response: ", response);
-        } catch (err) {
-          console.log("error: ",err);
-        }
-    }
-
-}
-
-function Uniswap(){
+function Uniswap({}){
     const [inputListBefore, setInputListBefore] = useState([{ address: ""}]);
     const [inputListAfter, setInputListAfter] = useState([{ address: ""}]);
     const [amountIn, setAmountIn] = useState('');
     const [amountOutMin, setAmountOutMin] = useState('');
     const [_chainIdTo, setChainIdTo] = useState('');
     const [receiver, setReceiver] = useState('');
+    const chainID = {"0x62": 97, "0x13881": 80001};
+    
 
-      const handleInputChangeBefore = (e, index) => {
+    const handleInputChangeBefore = (e, index) => {
         const { name, value } = e.target;
         const list = [...inputListBefore];
         list[index][name] = value;
@@ -90,9 +56,62 @@ function Uniswap(){
     async function Submit(){ 
         SwapUniswap(amountIn, amountOutMin, inputListBefore, receiver, inputListAfter); 
     }
-    
+
+    async function SwapUniswap(amountIn, amountOutMin, inputListBefore, receiver, inputListAfter, signer){
+        let chain = await setDestinationNet();
+        var before=[]
+        for (var i in inputListBefore){
+            before.push(inputListBefore[i]['address']);
+        }     
+        var after=[]
+        for (var i in inputListAfter){
+            after.push(inputListAfter[i]['address']);
+        } 
+        console.log([amountIn, amountOutMin, inputListBefore, receiver, inputListAfter]);
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const contract = new ethers.Contract(
+              AugustusSwapperAddress[chain],
+              IParaSwap,
+              signer
+            );
+      
+            try {
+                console.log("try Swap");
+                const options = {value: ethers.utils.parseEther((0.01).toString())};
+                const fee = ethers.utils.parseEther((0.05).toString()); 
+                const amount = ethers.utils.parseEther((amountIn).toString()); 
+                const minOut = ethers.utils.parseEther((amountOutMin).toString()); 
+                console.log("fee", fee);
+                let response = await contract.swapOnUniswapDeBridge([amount, minOut, before, after, receiver, fee, chain], options);
+                console.log("response: ", response);
+            } catch (err) {
+              console.log("error: ",err);
+            }
+        }
+    }
+
+    async function setDestinationNet(){
+        if (window.ethereum) {
+            const currentChainId = await window.ethereum.request({
+              method: 'eth_chainId',
+            });
+            if (chainID[currentChainId] == 80001){
+                return 97;
+            } else {
+                return 80001;
+            }
+        }
+    }
+
     return (
     <div>
+        <div>
+            <Text>
+                Crosschain Swap
+            </Text>
+        </div>
         <div>
             <Input
                 placeholder="amountIn"
@@ -165,6 +184,11 @@ function Uniswap(){
         onClick={Submit}>
             Submit
         </Button>
+{/* 
+        <Button className = 'customChkraButton'
+        onClick={setDestinationNet}>
+            Destination Net
+        </Button> */}
 
     </div>
     );
