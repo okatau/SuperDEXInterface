@@ -9,7 +9,7 @@ import IParaSwap from './../abi/IParaSwap.json'
 import { ethers, BigNumber } from "ethers";
 
 const AugustusSwapperAddress = {80001:"0x38582841f43D41e71C9b3A46B61aD79D765432AF", 
-                                97:"0x61F417C743afed21a8813c6b15a6D026D4EeA419"};
+                                97:"0xe0073335c740ed1589aa20b1360c673f9196985b"};
 
 function Uniswap({}){
     const [inputListBefore, setInputListBefore] = useState([{ address: ""}]);
@@ -67,7 +67,6 @@ function Uniswap({}){
         for (var i in inputListAfter){
             after.push(inputListAfter[i]['address']);
         } 
-        console.log([amountIn, amountOutMin, inputListBefore, receiver, inputListAfter]);
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
@@ -76,14 +75,13 @@ function Uniswap({}){
               IParaSwap,
               signer
             );
-      
             try {
+                console.log(chain, AugustusSwapperAddress[chain]);
                 console.log("try Swap");
                 const options = {value: ethers.utils.parseEther((0.01).toString())};
                 const fee = ethers.utils.parseEther((0.05).toString()); 
                 const amount = ethers.utils.parseEther((amountIn).toString()); 
                 const minOut = ethers.utils.parseEther((amountOutMin).toString()); 
-                console.log("fee", fee);
                 let response = await contract.swapOnUniswapDeBridge([amount, minOut, before, after, receiver, fee, chain], options);
                 console.log("response: ", response);
             } catch (err) {
@@ -94,7 +92,7 @@ function Uniswap({}){
 
     async function setDestinationNet(){
         if (window.ethereum) {
-            const currentChainId = await window.ethereum.request({
+            let currentChainId = await window.ethereum.request({
               method: 'eth_chainId',
             });
             if (chainID[currentChainId] == 80001){

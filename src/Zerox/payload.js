@@ -13,7 +13,7 @@ export async function payload(data){
             signer
         );
     try {
-        let response = await contract.ancodePayload(data);
+        let response = await contract.encodePayload(data);
         console.log(response);
         return (response);
     } catch (err) {

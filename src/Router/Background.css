@@ -39,3 +39,17 @@
     background-attachment: fixed;
     background-position: 40% 40%; 
   }
+
+  .multipath-background {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgb(189, 131, 255) 0%, rgba(0,0,0,0.8015581232492998) 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 40% 40%; 
+  }

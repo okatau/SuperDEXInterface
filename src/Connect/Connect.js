@@ -7,7 +7,7 @@ import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 
 function Connect({signer, setSigner, isConnected, setIsConnected ,renderconnectinfo, setrenderconnectinfo}){
     const targetNetworkId = ['0x61', '0x13881'];
-    const [net, setNet] = useState('Switch Net');
+    const [net, setNet] = useState('Update NET');
 
     async function ConnectF(){
         if(window.ethereum) {

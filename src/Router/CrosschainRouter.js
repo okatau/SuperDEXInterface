@@ -1,6 +1,7 @@
 import{ useState, form } from 'react';
 import Uniswap from './../Uniswap/Uniswap'
 import Zerox from './../Zerox/Zerox'
+import MultiPath from './../MultiPath/MultiPath'
 import './CrosschainRouter.css';
 import './Background.css';
 import Connect from '../Connect/Connect';
@@ -19,6 +20,7 @@ function CrosschainRouter(){
     const [isConnected, setIsConnected] = useState(Boolean(signer)); 
     const [isUniswap, setIsUniswap] = useState(false); 
     const [isZerox, setIsZerox] = useState(false); 
+    const [isMultiPath, setIsMultiPath] = useState(false); 
     const [renderconnectinfo, setrenderconnectinfo] = useState('');
 
     return (
@@ -35,6 +37,7 @@ function CrosschainRouter(){
         setBackground={setBackground}
         setIsUniswap={setIsUniswap}
         setIsZerox={setIsZerox}
+        setIsMultiPath={setIsMultiPath}
         setIsCrosschain={setIsCrosschain}
         />
         {
@@ -45,6 +48,10 @@ function CrosschainRouter(){
         {
         isZerox &&
             <Zerox />
+        }
+        {
+        isMultiPath &&
+            <MultiPath />
         }
         <Approve />
         <div className={customBackground}> </div>
