@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Press+Start+2P");
 @import url("https://fonts.googleapis.com/css?family=VT323");
 
-.Zerox {
+.Uniswap {
   text-align: center;
   font-family: "Press Start 2P", "VT323";
   color: black;
@@ -34,21 +34,21 @@ body {
   right: 0;
   bottom: 0;
   background: rgb(2,0,36);
-  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgb(23, 12, 175) 0%, rgba(0,0,0,0.8015581232492998) 100%);
+  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,34,220,1) 0%, rgba(0,0,0,0.8015581232492998) 100%);
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: 40% 40%; 
 }
 
-.chkraButton {
-  margin-top:10px;
-  background: #008fd4 ;
+.uniswapCustomChkraButton {
+  margin-top:2px;
+  background: hsl(323, 86%, 52%) ;
   border-radius: 5px ;
   box-shadow: 0px 2px 2px 1px #0F0F0F; 
   color: white ;
   cursor: pointer; 
   font-family: inherit; 
-  padding: 15px ;
+  padding: 3px ;
   align-content: center;
   margin: 10 ;
 }

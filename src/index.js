@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import CrosschainRouter from './router-pages/Router/CrosschainRouter';
+import CrosschainRouter from './Router/CrosschainRouter';
 
 import reportWebVitals from './reportWebVitals';
 

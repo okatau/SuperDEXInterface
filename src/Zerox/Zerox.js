@@ -1,17 +1,16 @@
 import{ useState, form } from 'react';
-// import styled from "styled-components";
 
-import './Uniswap.css';
-// import {SwapUniswap} from './Checker';
+import './Zerox.css';
 
+import {payload} from './payload.js'
 import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
-import IParaSwap from './../../abi/IParaSwap.json'
+import IParaSwap from './../abi/IParaSwap.json'
 import { ethers, BigNumber } from "ethers";
 
 const AugustusSwapperAddress = {80001:"0x38582841f43D41e71C9b3A46B61aD79D765432AF", 
                                 97:"0x61F417C743afed21a8813c6b15a6D026D4EeA419"};
 
-function Uniswap({}){
+function Zerox({}){
     const [inputListBefore, setInputListBefore] = useState([{ address: ""}]);
     const [inputListAfter, setInputListAfter] = useState([{ address: ""}]);
     const [amountIn, setAmountIn] = useState('');
@@ -19,6 +18,7 @@ function Uniswap({}){
     const [_chainIdTo, setChainIdTo] = useState('');
     const [receiver, setReceiver] = useState('');
     const chainID = {"0x62": 97, "0x13881": 80001};
+    const [dataPyload, setDataPayload] = useState('');
     
 
     const handleInputChangeBefore = (e, index) => {
@@ -54,10 +54,10 @@ function Uniswap({}){
     };
 
     async function Submit(){ 
-        SwapUniswap(amountIn, amountOutMin, inputListBefore, receiver, inputListAfter); 
+        SwapZerox(amountIn, amountOutMin, inputListBefore, receiver, inputListAfter); 
     }
 
-    async function SwapUniswap(amountIn, amountOutMin, inputListBefore, receiver, inputListAfter, signer){
+    async function SwapZerox(amountIn, amountOutMin, inputListBefore, receiver, inputListAfter, signer){
         let chain = await setDestinationNet();
         var before=[]
         for (var i in inputListBefore){
@@ -84,7 +84,7 @@ function Uniswap({}){
                 const amount = ethers.utils.parseEther((amountIn).toString()); 
                 const minOut = ethers.utils.parseEther((amountOutMin).toString()); 
                 console.log("fee", fee);
-                let response = await contract.swapOnUniswapDeBridge([amount, minOut, before, after, receiver, fee, chain], options);
+                let response = await contract.swapOnZeroxDeBridge([amount, minOut, before, after, receiver, fee, chain], options);
                 console.log("response: ", response);
             } catch (err) {
               console.log("error: ",err);
@@ -109,7 +109,7 @@ function Uniswap({}){
     <div>
         <div>
             <Text>
-                Crosschain Swap
+                Zerox Crosschain Swap
             </Text>
         </div>
         <div>
@@ -144,9 +144,9 @@ function Uniswap({}){
                     value={x.address}
                     onChange={e => handleInputChangeBefore(e, i)}
                 />
-                    {inputListBefore.length !== 1 && <Button className = 'customChkraButton'
+                    {inputListBefore.length !== 1 && <Button className = 'zeroxCustomChkraButton'
                     onClick={() => handleRemoveClickBefore(i)}>Sub</Button>}
-                    {inputListBefore.length - 1 === i && <Button className = 'customChkraButton' onClick={handleAddClickBefore}>Add</Button>}
+                    {inputListBefore.length - 1 === i && <Button className = 'zeroxCustomChkraButton' onClick={handleAddClickBefore}>Add</Button>}
             </div>
         );
         })}
@@ -173,25 +173,33 @@ function Uniswap({}){
                     value={x.address}
                     onChange={e => handleInputChangeAfter(e, i)}
                 />
-                    {inputListAfter.length !== 1 && <Button className = 'customChkraButton'
+                    {inputListAfter.length !== 1 && <Button className = 'zeroxCustomChkraButton'
                     onClick={() => handleRemoveClickAfter(i)}>Sub</Button>}
-                    {inputListAfter.length - 1 === i && <Button className = 'customChkraButton' onClick={handleAddClickAfter}>Add</Button>}
+                    {inputListAfter.length - 1 === i && <Button className = 'zeroxCustomChkraButton' onClick={handleAddClickAfter}>Add</Button>}
             </div>
         );
         })}
         </div>
-        <Button className = 'customChkraButton'
+        <Button className = 'zeroxCustomChkraButton'
         onClick={Submit}>
-            Submit
+            Swap
         </Button>
-{/* 
-        <Button className = 'customChkraButton'
-        onClick={setDestinationNet}>
-            Destination Net
-        </Button> */}
-
+        <div>
+        <Input
+                placeholder="data payload"
+                variant="outlined"
+                value={dataPyload}
+                onChange={(e) => setDataPayload(e.target.value)}
+                text='Minimum amount of token you want to get back'
+                type="string"
+                step="0.5"
+            />
+            <Button onClick={payload(dataPyload)}>
+                get payload
+            </Button>
+        </div>
     </div>
     );
 }
 
-export default Uniswap;
+export default Zerox;

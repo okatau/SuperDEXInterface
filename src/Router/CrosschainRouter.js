@@ -3,8 +3,8 @@ import Uniswap from './../Uniswap/Uniswap'
 import Zerox from './../Zerox/Zerox'
 import './CrosschainRouter.css';
 import './Background.css';
-import Connect from './Connect';
-import Approve from './Approve';
+import Connect from '../Connect/Connect';
+import Approve from './../Approve/Approve';
 import { render } from 'react-dom';
 import NavBar from './NavBar';
 

@@ -1,8 +1,8 @@
 import{ useState, form } from 'react';
 import React from 'react';
-import './CrosschainRouter.css';
+import './../Router/CrosschainRouter.css';
 import './Connect.css';
-import './Background.css';
+import './../Router/Background.css';
 import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 
 function Connect({signer, setSigner, isConnected, setIsConnected ,renderconnectinfo, setrenderconnectinfo}){
@@ -55,7 +55,8 @@ function Connect({signer, setSigner, isConnected, setIsConnected ,renderconnecti
                 params: [{ chainId: targetNetworkId[0] }],
             });
         }
-        writeConnectInfo(currentNet[1])
+        writeConnectInfo(currentNet[1]);
+        ConnectF();
         };
 
     function writeConnectInfo(checkNetwork){
@@ -68,9 +69,12 @@ function Connect({signer, setSigner, isConnected, setIsConnected ,renderconnecti
             print += signer[signer.length-i];
         }
         if (checkNetwork=='0x61')
+        {
             setNet('BSC testnet');
-        if (checkNetwork=='0x13881')
+        }
+        if (checkNetwork=='0x13881'){
             setNet('Polygon Mumbai testnet');
+        }
     }
     return(
         <div>
@@ -82,11 +86,11 @@ function Connect({signer, setSigner, isConnected, setIsConnected ,renderconnecti
             </p>
 
             <p>
-            <Button className="customButton" onClick={switchNetwork}> {net}
+            <Button className="customButton" onClick={ConnectF}> {net}
             </Button>  
             </p>
 
-            <Button className="customButton" onClick={ConnectF}> Update Data
+            <Button className="customButton" onClick={switchNetwork}> Switch network
             </Button>   
             </div>
             ):(

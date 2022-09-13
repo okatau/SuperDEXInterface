@@ -5,8 +5,8 @@ import './Approve.css';
 import { ethers, BigNumber } from "ethers";
 
 
-import IERC20ABI from "./../../abi/IERC20ABI.json"
-import './Connect.css';
+import IERC20ABI from "./../abi/IERC20ABI.json"
+import './../Connect/Connect.css';
 import { Box, Stack, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 
 
