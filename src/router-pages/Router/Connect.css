@@ -1,0 +1,12 @@
+.customButton {
+    margin-top:2px;
+    background: hsl(0, 0%, 100%) ;
+    border-radius: 5px ;
+    box-shadow: 0px 2px 2px 1px #0F0F0F; 
+    color: rgb(0, 0, 0) ;
+    cursor: pointer; 
+    font-family: inherit; 
+    padding: 3px ;
+    align-content: center;
+    margin: 10 ;
+  }

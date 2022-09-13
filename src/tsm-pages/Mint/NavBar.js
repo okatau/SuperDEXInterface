@@ -76,25 +76,6 @@ var NavBar = ({accounts, setAccounts}) => {
     return(
         <div>
             <Flex align="center" padding="20px" height="10vh">
-            
-                {/*Left Side - Social Media Icons*/}
-                {/* <Flex justify="space-around" width="40%" padding="75px">
-                    <Link href="https://www.facebook.com">
-                        <Image src={Facebook} boxSize="42px" margin="0 15px"/>
-                    </Link>
-                    <Link href="https://github.com/formal-crypto/TokenSaleMachine">
-                        <Image src={GitHub} boxSize="42px" margin="0 15px"/>
-                    </Link>
-                    <Link href="https://formalcrypto.org/">
-                        <Image src={Email} boxSize="42px" margin="0 15px"/>
-                    </Link>
-                </Flex> */}
-
-                
-                {/*Right Side - Sections and Connect*/}
-                {/* <Flex justify="space-between" align="center" padding="30px"> */}
-
-
                 { isConnected ? (
                     <Box position = 'absolute' margin="0 15px" left ="5%">Current One Token Price {oneTokenPrice}</Box>
                 ) : (

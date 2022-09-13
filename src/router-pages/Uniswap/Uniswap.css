@@ -40,15 +40,15 @@ body {
   background-position: 40% 40%; 
 }
 
-.chkraButton {
-  margin-top:10px;
-  background: #008fd4 ;
+.customChkraButton {
+  margin-top:2px;
+  background: hsl(323, 86%, 52%) ;
   border-radius: 5px ;
   box-shadow: 0px 2px 2px 1px #0F0F0F; 
   color: white ;
   cursor: pointer; 
   font-family: inherit; 
-  padding: 15px ;
+  padding: 3px ;
   align-content: center;
   margin: 10 ;
 }
