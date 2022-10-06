@@ -12,12 +12,16 @@ const AugustusSwapperAddress = {80001:"0x38582841f43D41e71C9b3A46B61aD79D765432A
                                 97:"0xe0073335c740ed1589aa20b1360c673f9196985b"};
 
 function Uniswap({}){
-    const [inputListBefore, setInputListBefore] = useState([{ address: ""}]);
-    const [inputListAfter, setInputListAfter] = useState([{ address: ""}]);
-    const [amountIn, setAmountIn] = useState('');
-    const [amountOutMin, setAmountOutMin] = useState('');
+    const [inputListBefore, setInputListBefore] = useState([
+        { address: "0x8475318Ee39567128ab81D6b857e7621b9dC3442"}, 
+        {address: "0x3f951798464b47e037fAF6eBAb337CB07F5e16c9"}]);
+    const [inputListAfter, setInputListAfter] = useState([
+        { address: "0xC75E8e8E14F370bF25ffD81148Fd16305b6aFba6"}, 
+        {address: "0x7bcE539216d7E2cB1270DAA564537E0C1bA3F356"}]);
+    const [amountIn, setAmountIn] = useState('1');
+    const [amountOutMin, setAmountOutMin] = useState('0.5');
     const [_chainIdTo, setChainIdTo] = useState('');
-    const [receiver, setReceiver] = useState('');
+    const [receiver, setReceiver] = useState('0x3604226674A32B125444189D21A51377ab0173d1');
     const chainID = {"0x62": 97, "0x13881": 80001};
     
 
