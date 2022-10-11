@@ -11,16 +11,24 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "browser": "^0.2.6",
     "framer-motion": "^6.5.1",
     "gh-pages": "^4.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "web3-eth-abi": "^1.8.0",
+    "webpack": "^5.74.0"
+  },
+  "resolve": {
+    "fallback": {
+      "stream": false
+    }
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject",
     "predeploy": "yarn run build",
     "deploy": "gh-pages -d build"
   },
@@ -58,6 +66,7 @@
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "assert": "^2.0.0",
+    "buffer": "^6.0.3",
     "chai": "^4.2.0",
     "crypto-browserify": "^3.12.0",
     "dotenv": "^16.0.1",
@@ -65,10 +74,15 @@
     "ethers": "^5.4.7",
     "hardhat": "^2.10.1",
     "hardhat-gas-reporter": "^1.0.8",
+    "https-browserify": "^1.0.0",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "react-app-rewired": "^2.2.1",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
     "solidity-coverage": "^0.7.21",
     "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.0",
     "typescript": "^4.7.4",
