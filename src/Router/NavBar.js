@@ -3,15 +3,20 @@ import './Background.css';
 
 import { Box, Button, Flex, Spacer, Input, Text } from "@chakra-ui/react";
 
-function NavBar({ routerValue, setRouterValue, setBackground, setIsUniswap, setIsZerox, setIsMultiPath, setIsCrosschain}){
+function NavBar({ routerValue, setRouterValue, setBackground, setIsUniswap, setIsZerox, setIsMultiPath, setIsNewUniswap, setIsCrosschain}){
     
     function returnRouter(){
         setIsUniswap(false);
         setIsZerox(false);
         setIsMultiPath(false);
+        setIsNewUniswap(false);
         if (routerValue == 'UniswapV2Router'){   
             setBackground('uniswap-background')
             setIsUniswap(true);
+        }
+        else if (routerValue == 'NewUniswapV2ExchangerRouter') {   
+            setBackground('new-uniswap-background')
+            setIsNewUniswap(true);
         }
         else if (routerValue == 'ZeroxV4'){
             setBackground('zerox-background')

@@ -26,6 +26,20 @@
     background-position: 40% 40%; 
   }
 
+  .new-uniswap-background {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgb(34, 34, 34) 0%, rgb(255, 161, 181) 0%, rgba(184, 183, 183, 0.802) 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 40% 40%; 
+  }
+
   .zerox-background {
     z-index: -1;
     position: absolute;

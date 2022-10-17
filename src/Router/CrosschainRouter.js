@@ -1,5 +1,6 @@
 import{ useState, form } from 'react';
 import Uniswap from './../Uniswap/Uniswap'
+import NewUniswap from './../NewUniswap/NewUniswap'
 import Zerox from './../Zerox/Zerox'
 import MultiPath from './../MultiPath/MultiPath'
 import './CrosschainRouter.css';
@@ -19,6 +20,7 @@ function CrosschainRouter(){
     const [signer, setSigner] = useState('');
     const [isConnected, setIsConnected] = useState(Boolean(signer)); 
     const [isUniswap, setIsUniswap] = useState(false); 
+    const [isNewUniswap, setIsNewUniswap] = useState(false); 
     const [isZerox, setIsZerox] = useState(false); 
     const [isMultiPath, setIsMultiPath] = useState(false); 
     const [renderconnectinfo, setrenderconnectinfo] = useState('');
@@ -38,13 +40,17 @@ function CrosschainRouter(){
         setIsUniswap={setIsUniswap}
         setIsZerox={setIsZerox}
         setIsMultiPath={setIsMultiPath}
+        setIsNewUniswap={setIsNewUniswap}
         setIsCrosschain={setIsCrosschain}
         />
         {
         isUniswap && 
             <Uniswap  />
         }
-        
+        {
+        isNewUniswap && 
+            <NewUniswap  />
+        }
         {
         isZerox &&
             <Zerox />
