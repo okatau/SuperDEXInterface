@@ -10,18 +10,28 @@ import { ethers, BigNumber } from "ethers";
 
 const AugustusSwapperAddress = {80001:"0x38582841f43D41e71C9b3A46B61aD79D765432AF", 
                                 97:"0xe0073335c740ed1589aa20b1360c673f9196985b"};
-
+const deBridgeFee = {80001: ethers.utils.parseEther("0.1"),
+                     97: ethers.utils.parseEther("0.01")}
 function Uniswap({}){
     const [inputListBefore, setInputListBefore] = useState([
-        { address: "0x8475318Ee39567128ab81D6b857e7621b9dC3442"}, 
-        {address: "0x3f951798464b47e037fAF6eBAb337CB07F5e16c9"}]);
+        {address: "0x8475318Ee39567128ab81D6b857e7621b9dC3442"}, 
+        {address: "0x3f951798464b47e037fAF6eBAb337CB07F5e16c9"}
+    ]);
     const [inputListAfter, setInputListAfter] = useState([
-        { address: "0xC75E8e8E14F370bF25ffD81148Fd16305b6aFba6"}, 
-        {address: "0x7bcE539216d7E2cB1270DAA564537E0C1bA3F356"}]);
+        {address: "0xC75E8e8E14F370bF25ffD81148Fd16305b6aFba6"}, 
+        {address: "0x7bcE539216d7E2cB1270DAA564537E0C1bA3F356"}
+    ]);
+    const [inputListRegSwap, setInputListRegSwap] = useState([
+        {address: "0x8475318Ee39567128ab81D6b857e7621b9dC3442"},
+        {address: "0x3f951798464b47e037fAF6eBAb337CB07F5e16c9"}
+    ]);
     const [amountIn, setAmountIn] = useState('1');
     const [amountOutMin, setAmountOutMin] = useState('0.5');
     const [_chainIdTo, setChainIdTo] = useState('');
     const [receiver, setReceiver] = useState('0x3604226674A32B125444189D21A51377ab0173d1');
+    const [isCrossChainSwap, setIsCrosschainSwap] = useState(true);
+    const [amountInRegSwap, setAmountInRegSwap] = useState('1');
+    const [amountOutMinRegSwap, setAmountOutMinRegSwap] = useState('0');
     const chainID = {"0x62": 97, "0x13881": 80001};
     
 
@@ -56,6 +66,17 @@ function Uniswap({}){
     const handleAddClickBefore = () => {
         setInputListBefore([...inputListBefore, { address: ""}]);
     };
+
+    const setTypeSwap = () => {
+        let value = document.getElementById("swapType").value;
+        console.log(isCrossChainSwap);
+        if(value == "One chain swap"){
+            setIsCrosschainSwap(false);
+            return;
+        }
+        setIsCrosschainSwap(true);
+        return;
+    }
 
     async function Submit(){ 
         SwapUniswap(amountIn, amountOutMin, inputListBefore, receiver, inputListAfter); 
@@ -93,6 +114,38 @@ function Uniswap({}){
             }
         }
     }
+    
+    async function SubmitRegularSwap(){
+        SwapUniswapRegular(amountInRegSwap, amountOutMinRegSwap, inputListRegSwap);
+    }
+
+    async function SwapUniswapRegular(amountInRegSwap, amountOutMinRegSwap, inputListRegSwap){
+        let chain = await setDestinationNet();
+        var path = [];
+        for(var i in inputListRegSwap){
+            path.push(inputListRegSwap[i]['address']);
+        }
+        // console.log(path);
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const contract = new ethers.Contract(
+              AugustusSwapperAddress[chain],
+              IParaSwap,
+              signer
+            );
+            try {
+                console.log(chain, AugustusSwapperAddress[chain]);
+                console.log("try Swap"); 
+                const amount = ethers.utils.parseEther((amountInRegSwap).toString()); 
+                const minOut = ethers.utils.parseEther((amountOutMinRegSwap).toString()); 
+                let response = await contract.swapOnUniswap(amount, minOut, path);
+                console.log("response: ", response);
+            } catch (err) {
+              console.log("error: ",err);
+            }
+        }
+    }
 
     async function setDestinationNet(){
         if (window.ethereum) {
@@ -110,82 +163,145 @@ function Uniswap({}){
     return (
     <div>
         <div>
-            <Text>
-                Uniswap Crosschain Swap
-            </Text>
+            <select id='swapType' onChange={setTypeSwap}>
+                <option>Crosschain swap</option>
+                <option>One chain swap</option>
+            </select>
         </div>
+        {isCrossChainSwap ?
         <div>
+            <div>
+                <Text>
+                    Uniswap Crosschain Swap
+                </Text>
+            </div>
+            <div>
+                <Input
+                    placeholder="Amount In"
+                    variant="outlined"
+                    value={amountIn}
+                    onChange={(e) => setAmountIn(e.target.value)}
+                    text='Amount of token you want to swap'
+                    type="number"
+                    step="0.5"
+                />
+            </div><div>
             <Input
-                placeholder="Amount In"
-                variant="outlined"
-                value={amountIn}
-                onChange={(e) => setAmountIn(e.target.value)}
-                text='Amount of token you want to swap'
-                type="number"
-                step="0.5"
-            />
-        </div><div>
-        <Input
-                placeholder="Amount Out Min"
-                variant="outlined"
-                value={amountOutMin}
-                onChange={(e) => setAmountOutMin(e.target.value)}
-                text='Minimum amount of token you want to get back'
-                type="number"
-                step="0.5"
-            />
-        </div><div>
-        {inputListBefore.map((x, i) => {
-            return (
-            <div className="box" id = 'inputPathBeforeSend' align = 'center'>
-                <input
-                    name="address"
-                    id = 'address'
-                    type='text'
-                    placeholder="Enter Address before Send"
-                    value={x.address}
-                    onChange={e => handleInputChangeBefore(e, i)}
+                    placeholder="Amount Out Min"
+                    variant="outlined"
+                    value={amountOutMin}
+                    onChange={(e) => setAmountOutMin(e.target.value)}
+                    text='Minimum amount of token you want to get back'
+                    type="number"
+                    step="0.5"
                 />
-                    {inputListBefore.length !== 1 && <Button className = 'uniswapCustomChkraButton'
-                    onClick={() => handleRemoveClickBefore(i)}>Sub</Button>}
-                    {inputListBefore.length - 1 === i && <Button className = 'uniswapCustomChkraButton' onClick={handleAddClickBefore}>Add</Button>}
-            </div>
-        );
-        })}
+            </div><div>
+            {inputListRegSwap.map((x, i) => {
+                return (
+                <div className="box" id = 'inputPathBeforeSend' align = 'center'>
+                    <input
+                        name="address"
+                        id = 'address'
+                        type='text'
+                        placeholder="Enter Address before Send"
+                        value={x.address}
+                        onChange={e => handleInputChangeBefore(e, i)}
+                    />
+                        {inputListRegSwap.length !== 1 && <Button className = 'uniswapCustomChkraButton'
+                        onClick={() => handleRemoveClickBefore(i)}>Sub</Button>}
+                        {inputListRegSwap.length - 1 === i && <Button className = 'uniswapCustomChkraButton' onClick={handleAddClickBefore}>Add</Button>}
+                </div>
+            );
+            })}
 
-        </div><div>
+            </div><div>
+            {inputListAfter.map((x, i) => {
+                return (
+                <div className="box" id = 'inputPathAfterSend' align = 'center'>
+                    <input
+                        name="address"
+                        id = 'address'
+                        type='text'
+                        placeholder="Enter Address After Send"
+                        value={x.address}
+                        onChange={e => handleInputChangeAfter(e, i)}
+                    />
+                        {inputListAfter.length !== 1 && <Button className = 'uniswapCustomChkraButton'
+                        onClick={() => handleRemoveClickAfter(i)}>Sub</Button>}
+                        {inputListAfter.length - 1 === i && <Button className = 'uniswapCustomChkraButton' onClick={handleAddClickAfter}>Add</Button>}
+                </div>
+            );
+            })}
+            </div><div>
 
-        <input
-            placeholder="_receiver"
-            variant="outlined"
-            value={receiver}
-            onChange={(e) => setReceiver(e.target.value)}
-            text='Token receiver'
-            type='text'
-          />    
-        </div><div>
-        {inputListAfter.map((x, i) => {
-            return (
-            <div className="box" id = 'inputPathAfterSend' align = 'center'>
                 <input
-                    name="address"
-                    id = 'address'
+                    placeholder="_receiver"
+                    variant="outlined"
+                    value={receiver}
+                    onChange={(e) => setReceiver(e.target.value)}
+                    text='Token receiver'
                     type='text'
-                    placeholder="Enter Address After Send"
-                    value={x.address}
-                    onChange={e => handleInputChangeAfter(e, i)}
-                />
-                    {inputListAfter.length !== 1 && <Button className = 'uniswapCustomChkraButton'
-                    onClick={() => handleRemoveClickAfter(i)}>Sub</Button>}
-                    {inputListAfter.length - 1 === i && <Button className = 'uniswapCustomChkraButton' onClick={handleAddClickAfter}>Add</Button>}
-            </div>
-        );
-        })}
+                />    
+                </div>
+            <Button className = 'uniswapCustomChkraButton'
+            onClick={Submit}>
+                Swap
+            </Button>
         </div>
-        <Button className = 'uniswapCustomChkraButton'
-        onClick={Submit}>
-            Swap
-        </Button>
+         : 
+        <div>
+            <div>
+                <Text>
+                    UniswapV2 regular swap
+                </Text>
+            </div>
+            <div>
+            <Input
+                    placeholder="Amount In"
+                    variant="outlined"
+                    value={amountInRegSwap}
+                    onChange={(e) => setAmountInRegSwap(e.target.value)}
+                    text='Amount of token you want to swap'
+                    type="number"
+                    step="0.1"
+                />
+            </div>
+            <div>
+                <Input
+                    placeholder="Amount Out Min"
+                    variant="outlined"
+                    value={amountOutMinRegSwap}
+                    onChange={(e) => setAmountOutMinRegSwap(e.target.value)}
+                    text='Minimum amount of token you want to get back'
+                    type="number"
+                />
+            </div>
+            <div>
+            {
+                inputListBefore.map((x, i) => {
+                    return (
+                    <div className="box" id = 'inputPathBeforeSend' align = 'center'>
+                        <input
+                            name="address"
+                            id = 'address'
+                            type='text'
+                            placeholder="Enter Address before Send"
+                            value={x.address}
+                            onChange={e => handleInputChangeBefore(e, i)}
+                        />
+                            {inputListBefore.length !== 1 && <Button className = 'uniswapCustomChkraButton'
+                            onClick={() => handleRemoveClickBefore(i)}>Sub</Button>}
+                            {inputListBefore.length - 1 === i && <Button className = 'uniswapCustomChkraButton' onClick={handleAddClickBefore}>Add</Button>}
+                    </div>
+                    );
+                })
+            }
+            <Button className = 'uniswapCustomChkraButton'
+            onClick={SubmitRegularSwap}>
+                Swap
+            </Button>
+            </div>
+        </div>}
     </div>
     );
 }

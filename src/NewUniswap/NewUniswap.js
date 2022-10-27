@@ -16,64 +16,78 @@ const weth = {
   80001: "0x0000000000000000000000000000000000000000"
 }
 function NewUniswap({}){
-    const [inputListBefore, setInputListBefore] = useState([
-        { address: "0x8475318Ee39567128ab81D6b857e7621b9dC3442"}, 
-        {address: "0x3f951798464b47e037fAF6eBAb337CB07F5e16c9"}]);
-    const [inputListAfter, setInputListAfter] = useState([
-        { address: "0xC75E8e8E14F370bF25ffD81148Fd16305b6aFba6"}, 
-        {address: "0x7bcE539216d7E2cB1270DAA564537E0C1bA3F356"}]);
+    const [pairListBefore, setPairListBefore] = useState([
+        {address: "0x38393334862fFa91e9aB802BCD3AF14afA67C688"}, 
+    ]);
+    const [pairListAfter, setPairListAfter] = useState([
+        {address: "0xC3d71bD825A9F00A48dF65824e974c03ab1355d0"}, 
+    ]);
     const [amountIn, setAmountIn] = useState('1');
     const [amountOutMin, setAmountOutMin] = useState('0.5');
+    const [tokenInBefore, setTokenInBefore] = useState('0x8475318Ee39567128ab81D6b857e7621b9dC3442');
+    const [tokenInAfter, setTokenInAfter] = useState('0xC75E8e8E14F370bF25ffD81148Fd16305b6aFba6');
     const [_chainIdTo, setChainIdTo] = useState('');
-    const [receiver, setReceiver] = useState('0x3604226674A32B125444189D21A51377ab0173d1');
+    const [receiver, setReceiver] = useState(ethers.constants.AddressZero);
+    const [isCrossChainSwap, setIsCrosschainSwap] = useState(true);
     const chainID = {"0x62": 97, "0x13881": 80001};
     
 
     const handleInputChangeBefore = (e, index) => {
         const { name, value } = e.target;
-        const list = [...inputListBefore];
+        const list = [...pairListBefore];
         list[index][name] = value;
-        setInputListBefore(list);
+        setPairListBefore(list);
     };
     const handleInputChangeAfter = (e, index) => {
         const { name, value } = e.target;
-        const list = [...inputListAfter];
+        const list = [...pairListAfter];
         list[index][name] = value;
-        setInputListAfter(list);
+        setPairListAfter(list);
     };
     
     const handleRemoveClickBefore = index => {
-        const list = [...inputListBefore];
+        const list = [...pairListBefore];
         list.splice(index, 1);
-        setInputListBefore(list);
+        setPairListBefore(list);
     };
     const handleRemoveClickAfter = index => {
-        const list = [...inputListAfter];
+        const list = [...pairListAfter];
         list.splice(index, 1);
-        setInputListAfter(list);
+        setPairListAfter(list);
     };
 
     const handleAddClickAfter = () => {
-        setInputListAfter([...inputListAfter, { address: ""}]);
+        setPairListAfter([...pairListAfter, { address: ""}]);
     };
 
     const handleAddClickBefore = () => {
-        setInputListBefore([...inputListBefore, { address: ""}]);
+        setPairListBefore([...pairListBefore, { address: ""}]);
     };
 
-    async function Submit(){ 
-        SwapUniswap(amountIn, amountOutMin, inputListBefore, inputListAfter); 
+    const setTypeSwap = () => {
+        let value = document.getElementById("swapType").value;
+        console.log(isCrossChainSwap);
+        if(value == "One chain swap"){
+            setIsCrosschainSwap(false);
+            return;
+        }
+        setIsCrosschainSwap(true);
+        return;
     }
 
-    async function SwapUniswap(amountIn, amountOutMin, inputListBefore, inputListAfter){
+    async function Submit(){ 
+        SwapUniswap(amountIn, amountOutMin, pairListBefore, pairListAfter); 
+    }
+
+    async function SwapUniswap(amountIn, amountOutMin, pairListBefore, pairListAfter){
         let chain = await setDestinationNet();
         var before=[]
-        for (var i in inputListBefore){
-            before.push(inputListBefore[i]['address']);
+        for (var i in pairListBefore){
+            before.push(pairListBefore[i]['address']);
         }     
         var after=[]
-        for (var i in inputListAfter){
-            after.push(inputListAfter[i]['address']);
+        for (var i in pairListAfter){
+            after.push(pairListAfter[i]['address']);
         } 
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -89,21 +103,29 @@ function NewUniswap({}){
                 const options = {value: ethers.utils.parseEther((0.01).toString())};
                 const fee = ethers.utils.parseEther((0.05).toString()); 
                 const amount = ethers.utils.parseEther((amountIn).toString()); 
-                const minOut = ethers.utils.parseEther((amountOutMin).toString()); 
-                let beneficiary = await signer.getAddress()
-                let poolsBeforeSend = await packPools(before);
-                let poolsAfterSend = await packPools(after);
+                const minOut = ethers.utils.parseEther((amountOutMin).toString());
+                let beneficiary;
+                
+                if (receiver == ethers.constants.AddressZero){
+                    beneficiary = await signer.getAddress();
+                } else {
+                    beneficiary = receiver;
+                }
+                
+                let poolsBeforeSend = await packPools(before, tokenInBefore, signer);
+                // let poolsAfterSend = await packPools(after, tokenInBefore, signer);
+                console.log("Test");
                 // console.log(beneficiary);
                 // console.log(poolsAfterSend);
                 // console.log(before[0]);
-                let response = await contract.swapOnUniswapV2ForkDeBridge([
-                    [before[0], after[0]],
-                    amount, minOut, 
-                    "0x0000000000000000000000000000000000000000", 
-                    poolsBeforeSend,
-                    poolsAfterSend,
-                    fee, chain, beneficiary], options);
-                console.log("response: ", response);
+                // let response = await contract.swapOnUniswapV2ForkDeBridge([
+                //     [tokenInBefore, tokenInAfter],
+                //     amount, minOut, 
+                //     "0x0000000000000000000000000000000000000000", 
+                //     poolsBeforeSend,
+                //     poolsAfterSend,
+                //     fee, chain, beneficiary], options);
+                // console.log("response: ", response);
             } catch (err) {
               console.log("error: ",err);
             }
@@ -126,82 +148,109 @@ function NewUniswap({}){
     return (
     <div>
         <div>
-            <Text>
-                Uniswap Crosschain Swap
-            </Text>
+            <select id='swapType' onChange={setTypeSwap}>
+                <option>Crosschain swap</option>
+                <option>One chain swap</option>
+            </select>
         </div>
-        <div>
+        {isCrossChainSwap ?
+            <div>
+            <div>
+                <Text>
+                    Uniswap Crosschain Swap
+                </Text>
+            </div>
+            <div>
+                <Input
+                    placeholder="Amount In"
+                    variant="outlined"
+                    value={amountIn}
+                    onChange={(e) => setAmountIn(e.target.value)}
+                    text='Amount of token you want to swap'
+                    type="number"
+                    step="0.5"
+                />
+            </div><div>
             <Input
-                placeholder="Amount In"
-                variant="outlined"
-                value={amountIn}
-                onChange={(e) => setAmountIn(e.target.value)}
-                text='Amount of token you want to swap'
-                type="number"
-                step="0.5"
-            />
-        </div><div>
-        <Input
-                placeholder="Amount Out Min"
-                variant="outlined"
-                value={amountOutMin}
-                onChange={(e) => setAmountOutMin(e.target.value)}
-                text='Minimum amount of token you want to get back'
-                type="number"
-                step="0.5"
-            />
-        </div><div>
-        {inputListBefore.map((x, i) => {
-            return (
-            <div className="box" id = 'inputPathBeforeSend' align = 'center'>
-                <input
-                    name="address"
-                    id = 'address'
-                    type='text'
-                    placeholder="Enter Address before Send"
-                    value={x.address}
-                    onChange={e => handleInputChangeBefore(e, i)}
+                    placeholder="Amount Out Min"
+                    variant="outlined"
+                    value={amountOutMin}
+                    onChange={(e) => setAmountOutMin(e.target.value)}
+                    text='Minimum amount of token you want to get back'
+                    type="number"
+                    step="0.5"
                 />
-                    {inputListBefore.length !== 1 && <Button className = 'newUniswapCustomChkraButton'
-                    onClick={() => handleRemoveClickBefore(i)}>Sub</Button>}
-                    {inputListBefore.length - 1 === i && <Button className = 'newUniswapCustomChkraButton' onClick={handleAddClickBefore}>Add</Button>}
-            </div>
-        );
-        })}
+            </div><div>
+            <Input
+                    placeholder="Token in before bridge"
+                    variant="outlined"
+                    value={tokenInBefore}
+                    onChange={(e) => setTokenInBefore(e.target.value)}
+                    text='First token in path before bridge'
+                    type="text"
+                /> 
+            </div><div>
+            <Input
+                    placeholder="Token in after bridge"
+                    variant="outlined"
+                    value={tokenInAfter}
+                    onChange={(e) => setTokenInAfter(e.target.value)}
+                    text='First token in path after bridge'
+                    type="text"
+                /> 
+            </div><div>
+            {pairListBefore.map((x, i) => {
+                return (
+                <div className="box" id = 'inputPathBeforeSend' align = 'center'>
+                    <input
+                        name="address"
+                        id = 'address'
+                        type='text'
+                        placeholder="Enter pair address before send"
+                        value={x.address}
+                        onChange={e => handleInputChangeBefore(e, i)}
+                    />
+                        {pairListBefore.length !== 1 && <Button className = 'newUniswapCustomChkraButton'
+                        onClick={() => handleRemoveClickBefore(i)}>Sub</Button>}
+                        {pairListBefore.length - 1 === i && <Button className = 'newUniswapCustomChkraButton' onClick={handleAddClickBefore}>Add</Button>}
+                </div>
+            );
+            })}
 
-        </div><div>
-
-        <input
-            placeholder="_receiver"
-            variant="outlined"
-            value={receiver}
-            onChange={(e) => setReceiver(e.target.value)}
-            text='Token receiver'
-            type='text'
-          />    
-        </div><div>
-        {inputListAfter.map((x, i) => {
-            return (
-            <div className="box" id = 'inputPathAfterSend' align = 'center'>
-                <input
-                    name="address"
-                    id = 'address'
-                    type='text'
-                    placeholder="Enter Address After Send"
-                    value={x.address}
-                    onChange={e => handleInputChangeAfter(e, i)}
-                />
-                    {inputListAfter.length !== 1 && <Button className = 'newUniswapCustomChkraButton'
-                    onClick={() => handleRemoveClickAfter(i)}>Sub</Button>}
-                    {inputListAfter.length - 1 === i && <Button className = 'newUniswapCustomChkraButton' onClick={handleAddClickAfter}>Add</Button>}
+            </div><div>
+            {pairListAfter.map((x, i) => {
+                return (
+                <div className="box" id = 'inputPathAfterSend' align = 'center'>
+                    <input
+                        name="address"
+                        id = 'address'
+                        type='text'
+                        placeholder="Enter pair address after send"
+                        value={x.address}
+                        onChange={e => handleInputChangeAfter(e, i)}
+                    />
+                        {pairListAfter.length !== 1 && <Button className = 'newUniswapCustomChkraButton'
+                        onClick={() => handleRemoveClickAfter(i)}>Sub</Button>}
+                        {pairListAfter.length - 1 === i && <Button className = 'newUniswapCustomChkraButton' onClick={handleAddClickAfter}>Add</Button>}
+                </div>
+            );
+            })}
+            </div><div>
+            <input
+                placeholder="_receiver"
+                variant="outlined"
+                value={receiver}
+                onChange={(e) => setReceiver(e.target.value)}
+                text='Token receiver'
+                type='text'
+            />    
             </div>
-        );
-        })}
-        </div>
-        <Button className = 'newUniswapCustomChkraButton'
-        onClick={Submit}>
-            Swap
-        </Button>
+            <Button className = 'newUniswapCustomChkraButton'
+            onClick={Submit}>
+                Swap
+            </Button>
+        </div> :
+        <div></div>}
     </div>
     );
 }

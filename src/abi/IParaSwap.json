@@ -1744,6 +1744,11 @@
 						"internalType": "uint256",
 						"name": "chainId",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "toApprove",
+						"type": "address"
 					}
 				],
 				"internalType": "struct Utils.SimpleDataDeBridge",

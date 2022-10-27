@@ -17,12 +17,17 @@ function MultiPath({}){
     const [destinationToken, setDestinationToken] = useState('0x7bcE539216d7E2cB1270DAA564537E0C1bA3F356'); 
     const [amountIn, setAmountIn] = useState(1);
     const [amountOutMin, setAmountOutMin] = useState(0.5);
+    const [isMultiSwap, setMultiSWap] = useState(true);
+    const [isCrossChainSwap, setIsCrosschainSwap] = useState(true);
 
     const [receiver, setReceiver] = useState('0x3604226674A32B125444189D21A51377ab0173d1');
     // const chainID = {"0x62": 97, "0x13881": 80001};
     
     async function Submit(){ 
         multiSwap(amountIn, amountOutMin, sourceToken, destinationToken, receiver, inputListBefore, inputListAfter); 
+    }
+    async function SubmitMultiSwapReg(){
+
     }
     const handleInputChangeBefore = (e, index) => {
         const { name, value } = e.target;
@@ -42,6 +47,7 @@ function MultiPath({}){
         list.splice(index, 1);
         setInputListBefore(list);
     };
+    
     const handleRemoveClickAfter = index => {
         const list = [...inputListAfter];
         list.splice(index, 1);
@@ -56,125 +62,285 @@ function MultiPath({}){
         setInputListBefore([...inputListBefore, { address: ""}]);
     };
 
+    const setTypeSwap = () => {
+        let value = document.getElementById("swapType").value;
+        console.log(isCrossChainSwap);
+        if(value == "Crosschain swap"){
+            setIsCrosschainSwap(true);
+            return;
+        }
+        setIsCrosschainSwap(false);
+        return;
+    }
+
+    const setFunction = () => {
+        let value = document.getElementById("chooseFunction").value;
+        console.log(isMultiSwap);
+        if (value == "MultiSwap"){
+            setMultiSWap(true);
+            return;
+        }
+        setMultiSWap(false);
+        return;
+    }
+
     return (
     <div>
         <div>
-            <Text>
-                MultiPath Crosschain Swap
-            </Text>
+            <select id='chooseFunction' onChange={setFunction}>
+                <option>MultiSwap</option>
+                <option>MegaSwap</option>
+            </select>
         </div>
-        <Text>Base Info</Text>
-
         <div>
+            <select id='swapType' onChange={setTypeSwap}>
+                <option>Crosschain swap</option>
+                <option>Regular swap</option>
+            </select>
+        </div>
+
+        {isMultiSwap ? (isCrossChainSwap ?
+        <div>  
+            <div>
+                <Text>
+                    MultiSwap crosschain swap
+                </Text>
+            </div>
+            <Text>Base Info</Text>
+
+            <div>
+                <Input
+                    placeholder="Source Token Address"
+                    variant="outlined"
+                    value={sourceToken}
+                    onChange={(e) => setSourceToken(e.target.value)}
+                    text='Amount of token you want to swap'
+                    type="string"
+                />
+            </div>
+            <div>
             <Input
-                placeholder="Source Token Address"
-                variant="outlined"
-                value={sourceToken}
-                onChange={(e) => setSourceToken(e.target.value)}
-                text='Amount of token you want to swap'
-                type="string"
-            />
-        </div>
-        <div>
-        <Input
-                placeholder="Destination Token Address"
-                variant="outlined"
-                value={destinationToken}
-                onChange={(e) => setDestinationToken(e.target.value)}
-                text='Amount of token you want to swap'
-                type="string"
-            />
-        </div>
-        <div>
-        <Input
-                placeholder="Amount In"
-                variant="outlined"
-                value={amountIn}
-                onChange={(e) => setAmountIn(e.target.value)}
-                text='Minimum amount of token you want to get back'
-                type="number"
-                step="0.5"
-            />
-        </div>
-        <div>
-        <Input
-                placeholder="Amount Out Min"
-                variant="outlined"
-                value={amountOutMin}
-                onChange={(e) => setAmountOutMin(e.target.value)}
-                text='Minimum amount of token you want to get back'
-                type="number"
-                step="0.5"
-            />
-        </div><div>
-
-
-        </div><div>
-
-        <Input
-            placeholder="Receiver"
-            variant="outlined"
-            value={receiver}
-            onChange={(e) => setReceiver(e.target.value)}
-            text='Token receiver'
-            type='string'
-          />    
-        </div>
-        <div>
-            <Text>
-                Before Send
-            </Text>
-        </div>
-        <div>
-        {inputListBefore.map((x, i) => {
-            return (
-            <div className="box" id = 'inputPathBeforeSend' align = 'center'>
-                <input
-                    name="address"
-                    id = 'address'
-                    type='text'
-                    placeholder="Enter (Token, Adapter, Pair) addresses before Send"
-                    value={x.address}
-                    onChange={e => handleInputChangeBefore(e, i)}
+                    placeholder="Destination Token Address"
+                    variant="outlined"
+                    value={destinationToken}
+                    onChange={(e) => setDestinationToken(e.target.value)}
+                    text='Amount of token you want to swap'
+                    type="string"
                 />
-                    {inputListBefore.length !== 1 && <Button className = 'MultiPathCustomChkraButton'
-                    onClick={() => handleRemoveClickBefore(i)}>Sub</Button>}
-                    {inputListBefore.length - 1 === i && <Button className = 'MultiPathCustomChkraButton' onClick={handleAddClickBefore}>Add</Button>}
             </div>
-        );
-        })}
-        </div>
-        <div>
-            <Text>
-                After Send
-            </Text>
-        </div>
-        <div>
-        {inputListAfter.map((x, i) => {
-            return (
-            <div className="box" id = 'inputPathAfterSend' align = 'center'>
-                <input
-                    name="address"
-                    id = 'address'
-                    type='text'
-                    placeholder="Enter (Token, Adapter, Pair) addresses after Send"
-                    value={x.address}
-                    onChange={e => handleInputChangeAfter(e, i)}
+            <div>
+            <Input
+                    placeholder="Amount In"
+                    variant="outlined"
+                    value={amountIn}
+                    onChange={(e) => setAmountIn(e.target.value)}
+                    text='Minimum amount of token you want to get back'
+                    type="number"
+                    step="0.5"
                 />
-                    {inputListAfter.length !== 1 && <Button className = 'MultiPathCustomChkraButton'
-                    onClick={() => handleRemoveClickAfter(i)}>Sub</Button>}
-                    {inputListAfter.length - 1 === i && <Button className = 'MultiPathCustomChkraButton' onClick={handleAddClickAfter}>Add</Button>}
             </div>
-        );
-        })}
-        </div>
+            <div>
+            <Input
+                    placeholder="Amount Out Min"
+                    variant="outlined"
+                    value={amountOutMin}
+                    onChange={(e) => setAmountOutMin(e.target.value)}
+                    text='Minimum amount of token you want to get back'
+                    type="number"
+                    step="0.5"
+                />
+            </div><div>
+
+
+            </div><div>
+
+            <Input
+                placeholder="Receiver"
+                variant="outlined"
+                value={receiver}
+                onChange={(e) => setReceiver(e.target.value)}
+                text='Token receiver'
+                type='string'
+            />    
+            </div>
+            <div>
+                <Text>
+                    Before Send
+                </Text>
+            </div>
+            <div>
+            {inputListBefore.map((x, i) => {
+                return (
+                <div className="box" id = 'inputPathBeforeSend' align = 'center'>
+                    <input
+                        name="address"
+                        id = 'address'
+                        type='text'
+                        placeholder="Enter (Token, Adapter, Pair) addresses before Send"
+                        value={x.address}
+                        onChange={e => handleInputChangeBefore(e, i)}
+                    />
+                        {inputListBefore.length !== 1 && <Button className = 'MultiPathCustomChkraButton'
+                        onClick={() => handleRemoveClickBefore(i)}>Sub</Button>}
+                        {inputListBefore.length - 1 === i && <Button className = 'MultiPathCustomChkraButton' onClick={handleAddClickBefore}>Add</Button>}
+                </div>
+            );
+            })}
+            </div>
+            <div>
+                <Text>
+                    After Send
+                </Text>
+            </div>
+            <div>
+            {inputListAfter.map((x, i) => {
+                return (
+                <div className="box" id = 'inputPathAfterSend' align = 'center'>
+                    <input
+                        name="address"
+                        id = 'address'
+                        type='text'
+                        placeholder="Enter (Token, Adapter, Pair) addresses after Send"
+                        value={x.address}
+                        onChange={e => handleInputChangeAfter(e, i)}
+                    />
+                        {inputListAfter.length !== 1 && <Button className = 'MultiPathCustomChkraButton'
+                        onClick={() => handleRemoveClickAfter(i)}>Sub</Button>}
+                        {inputListAfter.length - 1 === i && <Button className = 'MultiPathCustomChkraButton' onClick={handleAddClickAfter}>Add</Button>}
+                </div>
+            );
+            })}
+            </div>
+            <div>
+            <Text>Source and Destination Adapters Info generated by backend router</Text>
+            </div>
+            <Button className = 'MultiPathCustomChkraButton'
+            onClick={Submit}>
+                Swap
+            </Button>
+        </div> :
         <div>
-        <Text>Source and Destination Adapters Info generated by backend router</Text>
-        </div>
-        <Button className = 'MultiPathCustomChkraButton'
-        onClick={Submit}>
-            Swap
-        </Button>
+            <div>
+                <Text>
+                    MultiSwap regular swap
+                </Text>
+            </div>
+            <div>
+                <Input
+                    placeholder="Source Token Address"
+                    variant="outlined"
+                    value={sourceToken}
+                    onChange={(e) => setSourceToken(e.target.value)}
+                    text='Amount of token you want to swap'
+                    type="string"
+                />
+            </div>
+            <div>
+            <Input
+                    placeholder="Destination Token Address"
+                    variant="outlined"
+                    value={destinationToken}
+                    onChange={(e) => setDestinationToken(e.target.value)}
+                    text='Amount of token you want to swap'
+                    type="string"
+                />
+            </div>
+            <div>
+            <Input
+                    placeholder="Amount In"
+                    variant="outlined"
+                    value={amountIn}
+                    onChange={(e) => setAmountIn(e.target.value)}
+                    text='Minimum amount of token you want to get back'
+                    type="number"
+                    step="0.5"
+                />
+            </div>
+            <div>
+            <Input
+                    placeholder="Amount Out Min"
+                    variant="outlined"
+                    value={amountOutMin}
+                    onChange={(e) => setAmountOutMin(e.target.value)}
+                    text='Minimum amount of token you want to get back'
+                    type="number"
+                    step="0.5"
+                />
+            </div><div>
+
+
+            </div><div>
+
+            <Input
+                placeholder="Receiver"
+                variant="outlined"
+                value={receiver}
+                onChange={(e) => setReceiver(e.target.value)}
+                text='Token receiver'
+                type='string'
+            />    
+            </div>
+            <div>
+                <Text>
+                    Token out
+                </Text>
+            </div>
+            <div>
+            {inputListBefore.map((x, i) => {
+                return (
+                <div className="box" id = 'inputPathBeforeSend' align = 'center'>
+                    <input
+                        name="address"
+                        id = 'address'
+                        type='text'
+                        placeholder="Enter (Token, Adapter, Pair) addresses before Send"
+                        value={x.address}
+                        onChange={e => handleInputChangeBefore(e, i)}
+                    />
+                        {inputListBefore.length !== 1 && <Button className = 'MultiPathCustomChkraButton'
+                        onClick={() => handleRemoveClickBefore(i)}>Sub</Button>}
+                        {inputListBefore.length - 1 === i && <Button className = 'MultiPathCustomChkraButton' onClick={handleAddClickBefore}>Add</Button>}
+                </div>
+                );  
+            })}
+            <div>
+                <Text>
+                    Receiver
+                </Text>
+            </div>
+            <div>
+                <Input
+                    placeholder="Receiver"
+                    variant="outlined"
+                    value={receiver}
+                    onChange={(e) => setReceiver(e.target.value)}
+                    text='Token receiver'
+                    type='string'
+                />    
+                </div>
+            </div>
+            <Button className = 'MultiPathCustomChkraButton'
+            onClick={SubmitMultiSwapReg}>
+                Swap
+            </Button>
+        </div>) : 
+        (isCrossChainSwap ? 
+        <div>
+            <div>
+                <Text>
+                    Megaswap crosschain swap
+                </Text>
+            </div>
+            
+        </div> : 
+        <div>
+            <div>
+                <Text>
+                    Megaswap regular swap
+                </Text>
+            </div>
+        </div>)
+        }
     </div>
     );
 }
