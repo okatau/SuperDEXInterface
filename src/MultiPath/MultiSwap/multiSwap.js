@@ -1,4 +1,4 @@
-import IParaSwap from '../abi/IParaSwap.json'
+import IParaSwap from '../../abi/IParaSwap.json'
 import { ethers, BigNumber } from "ethers";
 const chainID = {"0x62": 97, "0x13881": 80001};
 const AugustusSwapperAddress = {80001:"0x38582841f43D41e71C9b3A46B61aD79D765432AF", 

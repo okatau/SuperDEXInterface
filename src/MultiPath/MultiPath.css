@@ -7,9 +7,9 @@
   color: black;
 }
 
-* {
+/* * {
   box-sizing: border-box;
-}
+} */
 
 body {
   overflow: hidden;
@@ -59,4 +59,16 @@ body {
   letter-spacing: 7.5%;
   color: black;
   text-align: center;
+}
+
+.inlineBox {
+  display:inline-block;
+  /* float:left; */
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.parentBox {
+  left: 50%;
+
 }

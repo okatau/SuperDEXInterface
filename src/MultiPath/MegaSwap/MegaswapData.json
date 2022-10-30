@@ -1,0 +1,46 @@
+{
+    "generalData": {
+        "address": null,
+        "amountIn": 0,
+        "amountOutMin": 0,
+        "expectedAmount": 0,
+        "receiver": null,
+        "megaSwapPathBefore": null,
+        "megaSwapPathAfter": null,
+        "partner":  "0x0000000000000000000000000000000000000000",
+        "feePercent": "452312848583266388373324160190187140051835877600158453279131187530910679040",
+        "permit": "0x00",
+        "deadline": 0,
+        "uuid": "0x48726217fca940b892b3b899843c8a57",
+        "executionFee": "50000000000000000",
+        "chainId": 0
+    },
+    "MegaSwapPathBefore": {
+        "amountInPercent": 0,
+        "path": null
+    },
+    "Path": {
+        "to": null, 
+        "totalNetworkFee": 10000,
+        "adapters": null
+    },
+    "AdaptersBSC": {
+        "adapter": "0x5D2Cc595eB3d8cEd105B07D6DfA8187a185E54F1",
+        "percent": 10000,
+        "networkFee": 0,
+        "route": null
+    },
+    "AdaptersPolygon": {
+        "adapter": "0xE2454708A0918D899bB5b2658Bd3E8655E37316C",
+        "percent": 10000,
+        "networkFee": 0,
+        "route": null
+    },
+    "Route": {
+        "index": 4,
+        "targetExchange": "0x0000000000000000000000000000000000000000",
+        "percent": 10000,
+        "payload": null,
+        "networkFee": 0
+    }
+}
