@@ -63,10 +63,18 @@ async function swapsInfo(list){
   for (var i in list){
     let payload = await encodeParams(list[i][2]);
     var swap = [
-      list[i][0], 0, [[
-        list[i][1], 10000, 0, [[
-          4, "0x0000000000000000000000000000000000000000", 10000,
-          payload, 0
+      list[i][0], 
+      0, 
+      [[
+        list[i][1], 
+        10000, 
+        0, 
+        [[
+          4, 
+          "0x0000000000000000000000000000000000000000", 
+          10000,
+          payload, 
+          0
         ]]
       ]]
     ];
@@ -101,16 +109,6 @@ async function collectData(amountIn, amountOutMin, sourceToken, destinationToken
   let data = await packData(amountIn, amountOutMin, sourceToken, destinationToken, receiver, before, after, chain);
   return data;
 }
-
-// function different(d1, d2){
-//   if (d1 != d2){
-//     for (var i in d1){
-//       if (d1[i] != d2[i]){
-//         console.log(d1[i], d2[i]);
-//       }
-//     }
-//   }
-// }
 
 export async function multiSwap(amountIn, amountOutMin, sourceToken, destinationToken, receiver, inputListBefore, inputListAfter){
     let chain = await setDestinationNet();

@@ -5,8 +5,12 @@ import { megaSwapCrosschain } from "./megaSwap";
 import '../MultiPath.css';
 
 function MegaSwapCrosschain({}){
-    const [inputListBefore, setInputListBefore] = useState([{ address: "0x3f951798464b47e037fAF6eBAb337CB07F5e16c9, 0x5D2Cc595eB3d8cEd105B07D6DfA8187a185E54F1, 0x38393334862fFa91e9aB802BCD3AF14afA67C688"}]);
-    const [inputListAfter, setInputListAfter] = useState([{ address: "0xC75E8e8E14F370bF25ffD81148Fd16305b6aFba6, 0xE2454708A0918D899bB5b2658Bd3E8655E37316C, 0xC3d71bD825A9F00A48dF65824e974c03ab1355d0"}]);
+    const [inputListBefore, setInputListBefore] = useState([
+        { address: "0x3f951798464b47e037fAF6eBAb337CB07F5e16c9, 0x38393334862fFa91e9aB802BCD3AF14afA67C688, 0x5D2Cc595eB3d8cEd105B07D6DfA8187a185E54F1" },
+    ]);
+    const [inputListAfter, setInputListAfter] = useState([
+        { address: "0xC75E8e8E14F370bF25ffD81148Fd16305b6aFba6, 0xC3d71bD825A9F00A48dF65824e974c03ab1355d0, 0xE2454708A0918D899bB5b2658Bd3E8655E37316C" },
+    ]);
     const [sourceToken, setSourceToken] = useState('0x8475318Ee39567128ab81D6b857e7621b9dC3442');
     const [destinationToken, setDestinationToken] = useState('0x7bcE539216d7E2cB1270DAA564537E0C1bA3F356');
     const [amountIn, setAmountIn] = useState(1);
@@ -14,15 +18,14 @@ function MegaSwapCrosschain({}){
     const [receiver, setReceiver] = useState('0x3604226674A32B125444189D21A51377ab0173d1');
 
     // New
-    const [megaSwapPathPercentBefore, setMegaSwapPathPercentBefore] = useState([{ percent: 100 }]);
-    const [megaSwapPathPercentAfter, setMegaSwapPathPercentAfter] = useState([{ percent: 100 }]);
+    const [megaSwapPathPercentBefore, setMegaSwapPathPercentBefore] = useState([{ percent: 100, perSplit: 1 }]);
+    const [megaSwapPathPercentAfter, setMegaSwapPathPercentAfter] = useState([{ percent: 100, perSplit: 1 }]);
 
     
     async function Submit(){ 
-        // multiSwap(amountIn, amountOutMin, sourceToken, destinationToken, receiver, inputListBefore, inputListAfter); 
         megaSwapCrosschain(sourceToken, destinationToken, amountIn, amountOutMin, megaSwapPathPercentBefore, megaSwapPathPercentAfter, inputListBefore, inputListAfter, receiver);
-        console.log(megaSwapPathPercentBefore);
-        console.log(inputListBefore);
+        // console.log(megaSwapPathPercentBefore);
+        // console.log(inputListBefore);
     }
     
     const handleInputChangeBefore = (e, index) => {
@@ -31,31 +34,31 @@ function MegaSwapCrosschain({}){
         list[index][name] = value;
         setInputListBefore(list);
     };
+    const handleRemoveClickBefore = index => {
+        const list = [...inputListBefore];
+        list.splice(index, 1);
+        setInputListBefore(list);
+        megaSwapPathPercentBefore[megaSwapPathPercentBefore.length - 1].perSplit -= 1;
+    };
+    const handleAddClickBefore = () => {
+        setInputListBefore([...inputListBefore, { address: ""}]);
+        megaSwapPathPercentBefore[megaSwapPathPercentBefore.length - 1].perSplit += 1;
+    };
     const handleInputChangeAfter = (e, index) => {
         const { name, value } = e.target;
         const list = [...inputListAfter];
         list[index][name] = value;
         setInputListAfter(list);
     };
-    
-    const handleRemoveClickBefore = index => {
-        const list = [...inputListBefore];
-        list.splice(index, 1);
-        setInputListBefore(list);
-    };
-    
     const handleRemoveClickAfter = index => {
         const list = [...inputListAfter];
         list.splice(index, 1);
         setInputListAfter(list);
+        megaSwapPathPercentAfter[megaSwapPathPercentAfter.length - 1].perSplit -= 1;
     };
-
     const handleAddClickAfter = () => {
         setInputListAfter([...inputListAfter, { address: ""}]);
-    };
-
-    const handleAddClickBefore = () => {
-        setInputListBefore([...inputListBefore, { address: ""}]);
+        megaSwapPathPercentAfter[megaSwapPathPercentAfter.length - 1].perSplit += 1;
     };
 
     // NEW
@@ -72,7 +75,7 @@ function MegaSwapCrosschain({}){
     };
 
     const handleAddPercentBefore = () => {
-        setMegaSwapPathPercentBefore([...megaSwapPathPercentBefore, {percent: 0}]);
+        setMegaSwapPathPercentBefore([...megaSwapPathPercentBefore, {percent: 0, perSplit: inputListAfter.length + 1}]);
     };
 
     const handlePercenChangeAfter = (e, index) => {
@@ -88,7 +91,7 @@ function MegaSwapCrosschain({}){
     };
 
     const handleAddPercentAfter = () => {
-        setMegaSwapPathPercentAfter([...megaSwapPathPercentAfter, {percent: 0}]);
+        setMegaSwapPathPercentAfter([...megaSwapPathPercentAfter, {percent: 0, perSplit: inputListAfter.length + 1}]);
     };
 
     return (
