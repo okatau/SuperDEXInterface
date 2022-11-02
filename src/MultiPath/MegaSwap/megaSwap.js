@@ -3,7 +3,6 @@ import UniswapV2PairABI from "../../abi/UniswapV2PairABI.json";
 import IParaSwap from "../../abi/IParaSwap.json";
 
 const Web3EthAbi = require('web3-eth-abi');
-const swapData = require("./MegaswapData.json");
 
 const chainID = {"0x62": 97, "0x13881": 80001};
 const targetNetworkId = ['0x61', '0x13881'];

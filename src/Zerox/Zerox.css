@@ -60,3 +60,10 @@ body {
   color: black;
   text-align: center;
 }
+
+.inlineBox {
+  display:inline-block;
+  /* float:left; */
+  margin-left: 2%;
+  margin-right: 2%;
+}
